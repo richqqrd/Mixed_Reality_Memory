@@ -8,9 +8,9 @@
 </head>
 
 <body>
-    <a-scene xr-mode="immersive-ar" embedded>
+    <a-scene>
         <!-- Kamera -->
-        <a-camera position="0 1.6 0"></a-camera>
+        <a-camera position="0 1.6 -4"></a-camera>
 
         <!-- Boden für VR -->
         <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
@@ -21,6 +21,10 @@
 
         <!-- Lichtquelle -->
         <a-light type="ambient" intensity="1"></a-light>
+
+        <a-light type="directional" position="0 1 1" intensity="0.8"></a-light>
+
+        <a-sky color="#ECECEC"></a-sky>
     </a-scene>
 </body>
 
