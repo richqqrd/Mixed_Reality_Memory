@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+</head>
+
+<body>
+    <a-scene xr-mode="immersive-ar" embedded>
+        <!-- Kamera -->
+        <a-camera position="0 1.6 0"></a-camera>
+
+        <!-- Boden für VR -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
+
+        <!-- Memory-Karten (Beispiele) -->
+        <a-box position="0 0.5 -2" depth="0.1" height="0.5" width="0.5" color="blue"></a-box>
+        <a-box position="1 0.5 -2" depth="0.1" height="0.5" width="0.5" color="red"></a-box>
+
+        <!-- Lichtquelle -->
+        <a-light type="ambient" intensity="1"></a-light>
+    </a-scene>
+</body>
+
+</html>
