@@ -1,3 +1,15 @@
+AFRAME.registerSystem('three-mesh-ui', {
+    init: function () {
+        this.update = ThreeMeshUI.update
+    },
+    tick: function () {
+        this.update()
+    }
+});
+
+
+
+
 AFRAME.registerComponent('menu-handler', {
     init: function () {
         this.el.addEventListener('click', function (evt) {
