@@ -12,6 +12,8 @@
         <a-assets>
             <!-- Poker table model -->
             <a-asset-item id="poker-table" src="res/sm_pokertable.glb"></a-asset-item>
+            <!-- Playing cards model -->
+            <a-asset-item id="playing-cards" src="res/playing_cards.glb"></a-asset-item>
         </a-assets>
 
         <!-- Camera -->
@@ -21,31 +23,28 @@
         <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
 
         <!-- Poker Table -->
-        <a-entity gltf-model="#poker-table" position="0 0 -2" scale="1 1 1">
+        <a-entity gltf-model="#poker-table" position="0 0 -2" scale="1.3 1.3 1.3">
         </a-entity>
 
-        <!-- Memory Cards -->
+        <!-- Memory Cards Grid -->
         <a-entity position="-1.2 0.85 -2">
             <!-- Row 1 -->
-            <a-box position="0 0 0" rotation="-90 0 0" depth="0.01" height="0.5" width="0.5" color="red"
-                class="card"></a-box>
-            <a-box position="0.6 0 0" rotation="-90 0 0" depth="0.01" height="0.5" width="0.5" color="red"
-                class="card"></a-box>
-            <a-box position="1.2 0 0" rotation="-90 0 0" depth="0.01" height="0.5" width="0.5" color="blue"
-                class="card"></a-box>
-            <a-box position="1.8 0 0" rotation="-90 0 0" depth="0.01" height="0.5" width="0.5" color="blue"
-                class="card"></a-box>
+            <a-entity gltf-model="#playing-cards" position="0 0 0" rotation="-90 0 0" scale="0.5 0.5 0.5"></a-entity>
+            <a-entity gltf-model="#playing-cards" position="0.6 0 0" rotation="-90 0 0" scale="0.5 0.5 0.5"></a-entity>
+            <a-entity gltf-model="#playing-cards" position="1.2 0 0" rotation="-90 0 0" scale="0.5 0.5 0.5"></a-entity>
+            <a-entity gltf-model="#playing-cards" position="1.8 0 0" rotation="-90 0 0" scale="0.5 0.5 0.5"></a-entity>
 
             <!-- Row 2 -->
-            <a-box position="0 0 0.6" rotation="-90 0 0" depth="0.01" height="0.5" width="0.5" color="green"
-                class="card"></a-box>
-            <a-box position="0.6 0 0.6" rotation="-90 0 0" depth="0.01" height="0.5" width="0.5" color="green"
-                class="card"></a-box>
-            <a-box position="1.2 0 0.6" rotation="-90 0 0" depth="0.01" height="0.5" width="0.5" color="yellow"
-                class="card"></a-box>
-            <a-box position="1.8 0 0.6" rotation="-90 0 0" depth="0.01" height="0.5" width="0.5" color="yellow"
-                class="card"></a-box>
+            <a-entity gltf-model="#playing-cards" position="0 0 0.6" rotation="-90 0 0" scale="0.5 0.5 0.5"></a-entity>
+            <a-entity gltf-model="#playing-cards" position="0.6 0 0.6" rotation="-90 0 0"
+                scale="0.5 0.5 0.5"></a-entity>
+            <a-entity gltf-model="#playing-cards" position="1.2 0 0.6" rotation="-90 0 0"
+                scale="0.5 0.5 0.5"></a-entity>
+            <a-entity gltf-model="#playing-cards" position="1.8 0 0.6" rotation="-90 0 0"
+                scale="0.5 0.5 0.5"></a-entity>
         </a-entity>
+
+
 
         <!-- Lighting -->
         <a-light type="ambient" intensity="1"></a-light>
