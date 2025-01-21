@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html>
 
+<!-- TODO curso lade zeit-->
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="node_modules/aframe-gui/dist/aframe-gui.min.js"></script>
     <script src="game-handler.js"></script>
+    <script src="menu-handler.js"></script>
 
 </head>
 
@@ -76,7 +80,11 @@
         </a-assets>
 
         <!-- Camera -->
-        <a-camera position="0 3 -4"></a-camera>
+        <!--<a-camera position="0 3 -4"> -->
+        <a-camera position="0 5 -2">
+            <a-cursor raycaster="objects: .card" color="#000000" fuse="true" fuse-timeout="3000">
+            </a-cursor>
+        </a-camera>
 
         <!-- VR Floor -->
         <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
@@ -85,15 +93,11 @@
         <a-entity gltf-model="#poker-table" position="0 0 -2" scale="2.5 2.5 2.5">
         </a-entity>
 
+
+        <!-- Menu -->
+        <a-entity position="0 1.6 -2" rotation="0 0 0" menu-handler></a-entity>
         <!-- Memory Cards -->
-        <a-entity position="-0.5 2.5 -2.7">
-            <!-- Row 1 -->
-            <a-box position="0 0 0" rotation="-90 0 0" depth="0.001" height="0.3" width="0.2"
-                material="src: #card-back; side: double" data-card="#club2" card-handler class="card">
-            </a-box>
-            <a-box position="0.3 0 0" rotation="-90 0 0" depth="0.001" height="0.3" width="0.2"
-                material="src: #card-back; side: double" data-card="#club3" card-handler class="card">
-            </a-box>
+        <a-entity position="-0.5 2.5 -2.7" game-mananger>
         </a-entity>
 
 

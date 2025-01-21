@@ -6,7 +6,7 @@ AFRAME.registerComponent('game-manager', {
 
     init: function () {
         // Verfügbare Kartentexturen
-        const cardTypes = [
+        this.cardTypes = [
             // Clubs
             '#club2', '#club3', '#club4', '#club5', '#club6',
             '#club7', '#club8', '#club9', '#club10',
@@ -37,7 +37,7 @@ AFRAME.registerComponent('game-manager', {
         cards = this.shuffleArray(cards);
 
         // Karten im 4x4 Grid erstellen
-        const spacing = 0.3;
+        const spacing = 0.4;
         for (let row = 0; row < 4; row++) {
             for (let col = 0; col < 4; col++) {
                 const cardIndex = row * 4 + col;
@@ -73,5 +73,67 @@ AFRAME.registerComponent('game-manager', {
         card.setAttribute('class', 'card');
 
         this.el.appendChild(card);
+    }
+});
+
+AFRAME.registerComponent('card-handler', {
+    init: function () {
+        this.isFlipped = false;
+        const el = this.el;
+
+        // Statische Variablen für alle Karten
+        if (!AFRAME.cardState) {
+            AFRAME.cardState = {
+                firstCard: null,
+                secondCard: null,
+                canFlip: true
+            };
+        }
+
+        this.el.addEventListener('mouseenter', function () {
+            this.setAttribute('scale', '1.1 1.1 1.1');
+        });
+
+        this.el.addEventListener('mouseleave', function () {
+            this.setAttribute('scale', '1 1 1');
+        });
+
+        this.el.addEventListener('click', () => { // Use arrow function to preserve 'this'
+            if (!AFRAME.cardState.canFlip) return;
+            if (this.isFlipped) return;  // Use this.isFlipped
+
+            const cardType = this.el.getAttribute('data-card');
+
+            if (!AFRAME.cardState.firstCard) {
+                AFRAME.cardState.firstCard = this.el;
+                this.isFlipped = true;  // Use this.isFlipped
+                this.el.setAttribute('material', `src: ${cardType}; side: double`);
+            }
+            else if (!AFRAME.cardState.secondCard && this.el !== AFRAME.cardState.firstCard) {
+                AFRAME.cardState.secondCard = this.el;
+                this.isFlipped = true;  // Use this.isFlipped
+                this.el.setAttribute('material', `src: ${cardType}; side: double`);
+
+                const firstCardType = AFRAME.cardState.firstCard.getAttribute('data-card');
+                AFRAME.cardState.canFlip = false;
+
+                if (firstCardType === cardType) {
+                    AFRAME.cardState.firstCard = null;
+                    AFRAME.cardState.secondCard = null;
+                    AFRAME.cardState.canFlip = true;
+                } else {
+                    setTimeout(() => {
+                        AFRAME.cardState.firstCard.setAttribute('material', 'src: #card-back; side: double');
+                        AFRAME.cardState.secondCard.setAttribute('material', 'src: #card-back; side: double');
+                        // Correctly access the component instances
+                        AFRAME.cardState.firstCard.components['card-handler'].isFlipped = false;
+                        AFRAME.cardState.secondCard.components['card-handler'].isFlipped = false;
+                        AFRAME.cardState.firstCard = null;
+                        AFRAME.cardState.secondCard = null;
+                        AFRAME.cardState.canFlip = true;
+                    }, 1000);
+                }
+            }
+        });
     }
 });
