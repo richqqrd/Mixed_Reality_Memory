@@ -5,14 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="game-handler.js"></script>
+
 </head>
 
 <body>
     <a-scene>
-        <a-assets>
-            <!-- Poker table model -->
-            <a-asset-item id="poker-table" src="res/sm_pokertable.glb"></a-asset-item>
-        </a-assets>
         <a-assets>
             <!-- Poker table model -->
             <a-asset-item id="poker-table" src="res/sm_pokertable.glb"></a-asset-item>
@@ -33,15 +31,14 @@
         </a-entity>
 
         <!-- Memory Cards -->
-        <a-entity position="-0.5 2.2 -2.7">
+        <a-entity position="-0.5 2.5 -2.7">
             <!-- Row 1 -->
-            <a-entity gltf-model="#card-model" position="0 0 0" rotation="-90 0 0" scale="1 1 1"
-                material="src: #card-back; side: double" data-card="club2" card-handler class="card">
-            </a-entity>
-            <a-entity gltf-model="#card-model" position="0.3 0 0" rotation="-90 0 0" scale="1 1 1"
-                material="src: #card-back; side: double" data-card="club3" card-handler class="card">
-            </a-entity>
-
+            <a-box position="0 0 0" rotation="-90 0 0" depth="0.001" height="0.3" width="0.2"
+                material="src: #card-back; side: double" data-card="#club2" card-handler class="card">
+            </a-box>
+            <a-box position="0.3 0 0" rotation="-90 0 0" depth="0.001" height="0.3" width="0.2"
+                material="src: #card-back; side: double" data-card="#club3" card-handler class="card">
+            </a-box>
         </a-entity>
 
 
