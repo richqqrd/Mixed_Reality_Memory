@@ -34,18 +34,48 @@ AFRAME.registerComponent('game-manager', {
         while (this.el.firstChild) {
             this.el.removeChild(this.el.firstChild);
         }
+        if (isAR) {
+            // Warte auf Hit-Test-Ergebnisse
+            this.initARPlacement(scene);
+        } else {
+            // Karten direkt für VR/Desktop platzieren
+            this.createCardsGrid({ x: -0.8, z: -0.8 }, 0.4);
+        }
+    },
 
-        // Create new cards
+    initARPlacement: function (scene) {
+        const self = this;
+
+        // AR Hit-Test-Integration
+        const xrSession = scene.renderer.xr.getSession();
+        if (xrSession) {
+            const viewerSpace = scene.renderer.xr.getReferenceSpace();
+            xrSession.requestReferenceSpace('viewer').then((refSpace) => {
+                xrSession.requestHitTestSource({ space: viewerSpace }).then((hitTestSource) => {
+                    scene.addEventListener('click', (event) => {
+                        const frame = event.detail.frame;
+                        const hitTestResults = frame.getHitTestResults(hitTestSource);
+                        if (hitTestResults.length > 0) {
+                            const hit = hitTestResults[0];
+                            const position = hit.getPose(refSpace).transform.position;
+
+                            // Platziere Karten stabil auf der Oberfläche
+                            self.createCardsGrid({ x: position.x, z: position.z }, 0.2);
+                        }
+                    });
+                });
+            });
+        }
+    },
+
+
+    createCardsGrid: function (startPosition, spacing) {
         const selectedCards = this.selectRandomCards(8);
         let cards = [];
         selectedCards.forEach(card => {
             cards.push(card, card); // Create pairs
         });
         cards = this.shuffleArray(cards);
-
-        // Create cards in 4x4 grid
-        const spacing = isAR ? 0.2 : 0.4; // Smaller spacing in AR
-        const startPosition = isAR ? { x: -0.6, z: -0.6 } : { x: -0.8, z: -0.8 };
 
         for (let row = 0; row < 4; row++) {
             for (let col = 0; col < 4; col++) {
@@ -54,8 +84,7 @@ AFRAME.registerComponent('game-manager', {
                     this.createCard(
                         startPosition.x + col * spacing,
                         startPosition.z + row * spacing,
-                        cards[cardIndex],
-                        isAR
+                        cards[cardIndex]
                     );
                 }
             }
