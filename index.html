@@ -6,18 +6,23 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="node_modules/aframe-gui/dist/aframe-gui.min.js"></script>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://rawgit.com/rdub80/aframe-gui/master/dist/aframe-gui.min.js"></script>
     <script src="game-handler.js"></script>
     <script src="menu-handler.js"></script>
 
 </head>
 
 <body>
-    <a-scene>
+    <div id="overlay"></div>
+    <a-scene webxr="requiredFeatures: hit-test; 
+           optionalFeatures: dom-overlay, local-floor;
+           overlayElement: #overlay;" vr-mode-ui="enabled: true" ar-mode-ui="enabled: true"
+        device-orientation-permission-ui="enabled: true" renderer="colorManagement: true">
         <a-assets>
             <!-- Poker table model -->
             <a-asset-item id="poker-table" src="res/sm_pokertable.glb"></a-asset-item>
+
             <!-- Card textures -->
             <img id="card-back" src="res/model/Back.png">
             <!-- Clubs -->
@@ -77,37 +82,233 @@
             <img id="spadeQ" src="res/model/Spades_Q.png">
             <img id="spadeK" src="res/model/Spades_K.png">
             <img id="spadeA" src="res/model/Spades_A.png">
+
+            <!-- Add the rosewood parquet texture -->
+            <img id="floor-texture" src="res/Rosewood_Parquet.jpg">
+
+            <!-- Wände -->
+            <img id="wall-texture" src="res/wall.jpg">
         </a-assets>
 
         <!-- Camera -->
         <!--<a-camera position="0 3 -4"> -->
-        <a-camera position="0 5 -2">
-            <a-cursor raycaster="objects: .card" color="#000000" fuse="true" fuse-timeout="3000">
-            </a-cursor>
-        </a-camera>
-
-        <!-- VR Floor -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
-
-        <!-- Poker Table -->
-        <a-entity gltf-model="#poker-table" position="0 0 -2" scale="2.5 2.5 2.5">
+        <a-entity id="cameraRig" position="0 2 -10" rotation="0 180 0">
+            <a-camera look-controls wasd-controls position="0 1.6 0">
+                <a-gui-cursor id="cursor" raycaster="objects: [gui-interactable], .card" fuse="true" fuse-timeout="2000"
+                    color="#ECEFF1" hover-color="#CFD8DC" active-color="#607D8B" design="ring">
+                    <!-- dot, ring, reticle, cross  -->
+                </a-gui-cursor> <!-- /cursor -->
+            </a-camera> <!-- /camera -->
         </a-entity>
 
+        <a-plane position="0 7.5 10" rotation="0 180 0" width="20" height="15"
+            material="src: #wall-texture; repeat: 8 6; side: double">
+        </a-plane>
+
+        <!-- Back Wall -->
+        <a-plane position="0 7.5 -10" rotation="0 0 0" width="20" height="15"
+            material="src: #wall-texture; repeat: 8 6; side: double">
+        </a-plane>
+
+        <!-- Left Wall -->
+        <a-plane position="-10 7.5 0" rotation="0 90 0" width="20" height="15"
+            material="src: #wall-texture; repeat: 8 6; side: double">
+        </a-plane>
+
+        <!-- Right Wall -->
+        <a-plane position="10 7.5 0" rotation="0 -90 0" width="20" height="15"
+            material="src: #wall-texture; repeat: 8 6; side: double">
+        </a-plane>
+
+        <!-- Floor remains the same -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" material="src: #floor-texture; repeat: 8 8">
+        </a-plane>
+
+        <!-- Ceiling -->
+        <a-plane position="0 15 0" rotation="90 0 0" width="20" height="20" color="#8B4513"></a-plane>
+        <!-- Poker Table -->
+        <a-entity id="poker-table" gltf-model="#poker-table" position="0 0 -2" scale="2.8 2.8 2.8">
+        </a-entity>
 
         <!-- Menu -->
-        <a-entity position="0 1.6 -2" rotation="0 0 0" menu-handler></a-entity>
+        <!-- Menu -->
+        <a-entity position="0 2.5 -6" rotation="0 180 0" menu-handler>
+            <!-- Menü -->
+            <a-gui-flex-container flex-direction="column" justify-content="center" align-items="center" opacity="0.5"
+                width="3.5" height="4.5" panel-color="#1E1E1E" panel-rounded="0.2" position="0 0 0">
+
+                <!-- Titel -->
+                <a-gui-label width="3" height="0.5" value="Memory Game" font-size="0.3" font-color="#FFFFFF"
+                    background-color="#333333" margin="0 0 0.2 0"></a-gui-label>
+
+                <!-- Start Game Button -->
+                <a-gui-button width="2.5" height="0.7" value="Start Game" font-size="0.4" font-color="#FFFFFF"
+                    background-color="#4CAF50" hover-color="#45A049" active-color="#388E3C" onclick="startGame()"
+                    margin="0 0 0.2 0"></a-gui-button>
+
+                <!-- Options Button -->
+                <a-gui-button width="2.5" height="0.7" value="Options" font-size="0.4" font-color="#FFFFFF"
+                    background-color="#2196F3" hover-color="#1976D2" active-color="#0D47A1" onclick="showOptions()"
+                    margin="0 0 0.2 0"></a-gui-button>
+
+                <!-- Exit Button -->
+                <a-gui-button width="2.5" height="0.7" value="Exit" font-size="0.4" font-color="#FFFFFF"
+                    background-color="#F44336" hover-color="#D32F2F" active-color="#B71C1C" onclick="exitGame()"
+                    margin="0 0 0.2 0"></a-gui-button>
+
+            </a-gui-flex-container>
+
+
+        </a-entity>
+
+        <!-- Ingame-Menü -->
+        <a-entity id="ingameMenu" position="0 4 0" rotation="0 180 0" visible="false">
+            <a-gui-flex-container flex-direction="column" justify-content="center" align-items="flex-start" width="2.5"
+                height="2.5" panel-color="#333333" opacity="0.8" panel-rounded="0.2">
+
+                <a-gui-label id="timerLabel" width="2.3" height="0.4" value="Time: 00:00" font-size="0.3"
+                    font-color="#FFFFFF" background-color="#444444"></a-gui-label>
+
+                <a-gui-label id="pairsLabel" width="2.3" height="0.4" value="Pairs Found: 0" font-size="0.3"
+                    font-color="#FFFFFF" background-color="#444444"></a-gui-label>
+
+                <!-- Reset Button -->
+                <a-gui-button width="2.3" height="0.5" value="Reset Game" font-size="0.3" font-color="#FFFFFF"
+                    background-color="#FF9800" hover-color="#FB8C00" active-color="#EF6C00" onclick="resetGame()"
+                    margin="0.1 0 0.1 0">
+                </a-gui-button>
+
+                <!-- Back to Menu Button -->
+                <a-gui-button width="2.3" height="0.5" value="Back to Menu" font-size="0.3" font-color="#FFFFFF"
+                    background-color="#F44336" hover-color="#E53935" active-color="#D32F2F" onclick="backToMenu()"
+                    margin="0.1 0 0.1 0">
+                </a-gui-button>
+            </a-gui-flex-container>
+        </a-entity>
+
         <!-- Memory Cards -->
-        <a-entity position="-0.5 2.5 -2.7" game-mananger>
+        <a-entity position="-0.5 2.5 -2.7" game-manager>
         </a-entity>
 
 
 
 
         <!-- Lighting -->
-        <a-light type="ambient" intensity="1"></a-light>
-        <a-light type="directional" position="0 1 1" intensity="0.8"></a-light>
-        <a-sky color="#ECECEC"></a-sky>
-    </a-scene>
+        <!-- Ambient light for general room illumination -->
+        <a-light type="ambient" intensity="0.4" color="#4C4C4C"></a-light>
+
+        <!-- Point lights for walls -->
+        <a-light type="point" position="-5 7.5 0" intensity="0.1" color="#FFF" decay="2"></a-light>
+        <a-light type="point" position="5 7.5 0" intensity="0.1" color="#FFF" decay="2"></a-light>
+
+        <!-- Softer spotlight for table -->
+        <a-light type="spot" position="0 10 -2" rotation="-90 0 0" intensity="0.8" angle="60" penumbra="0.6"
+            decay="1.5">
+        </a-light>
+        <a-sky color="#111111"></a-sky> </a-scene>
+
+    <script>
+        function exitGame() {
+            // Timer stoppen
+            clearInterval(timerInterval);
+
+            // Ingame-Menü ausblenden
+            const ingameMenu = document.querySelector('#ingameMenu');
+            ingameMenu.setAttribute('visible', false);
+            window.close();
+        }
+
+        window.gameTime = 0;
+        window.pairsFound = 0;
+        window.timerInterval = null;
+
+        window.startGame = function () {
+            // Get the camera rig
+            const cameraRig = document.querySelector('#cameraRig');
+
+            // New position closer to the table
+            cameraRig.setAttribute('position', '0 2 -3');
+            cameraRig.setAttribute('rotation', '0 180 0');
+
+            const mainMenu = document.querySelector('[menu-handler]');
+            mainMenu.setAttribute('visible', false);
+
+            // Ingame-Menü sichtbar machen
+            const ingameMenu = document.querySelector('#ingameMenu');
+            ingameMenu.setAttribute('visible', true);
+
+            // Timer zurücksetzen und starten
+            gameTime = 0;
+            pairsFound = 0;
+            updatePairsFound();
+            timerInterval = setInterval(updateTimer, 1000);
+
+            // Get game manager and start the game
+            const gameManager = document.querySelector('[game-manager]').components['game-manager'];
+            gameManager.startNewGame();
+        }
+
+        // Timer aktualisieren
+        function updateTimer() {
+            gameTime++;
+            const minutes = Math.floor(gameTime / 60);
+            const seconds = gameTime % 60;
+            const formattedTime = `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            const timerLabel = document.querySelector('#timerLabel');
+            timerLabel.setAttribute('value', formattedTime);
+        }
+
+        // Gefundene Paare aktualisieren
+        window.updatePairsFound = function () {
+            const pairsLabel = document.querySelector('#pairsLabel');
+            pairsLabel.setAttribute('value', `Pairs Found: ${pairsFound}`);
+        }
+
+        function resetGame() {
+            // Timer zurücksetzen
+            gameTime = 0;
+            pairsFound = 0;
+            updatePairsFound();
+
+            // Timer neu starten
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+
+            // Update timer display immediately
+            const timerLabel = document.querySelector('#timerLabel');
+            timerLabel.setAttribute('value', 'Time: 00:00');
+
+            // Spielmanager für Neustart des Spiels
+            const gameManager = document.querySelector('[game-manager]').components['game-manager'];
+            gameManager.startNewGame();
+        }
+
+        function backToMenu() {
+            // Timer stoppen
+            clearInterval(timerInterval);
+
+            // Show main menu
+            const mainMenu = document.querySelector('[menu-handler]');
+            mainMenu.setAttribute('visible', true);
+
+            // Ingame-Menü ausblenden
+            const ingameMenu = document.querySelector('#ingameMenu');
+            ingameMenu.setAttribute('visible', false);
+
+            // Kamera zurücksetzen
+            const cameraRig = document.querySelector('#cameraRig');
+            cameraRig.setAttribute('position', '0 2 -10');
+            cameraRig.setAttribute('rotation', '0 180 0');
+
+            // Clear cards instead of calling undefined endGame
+            const gameManager = document.querySelector('[game-manager]');
+            while (gameManager.firstChild) {
+                gameManager.removeChild(gameManager.firstChild);
+            }
+        }
+
+    </script>
 </body>
 
 </html>
