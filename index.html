@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://rawgit.com/rdub80/aframe-gui/master/dist/aframe-gui.min.js"></script>
-    <script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
 
     <script src="game-handler.js"></script>
     <script src="menu-handler.js"></script>
@@ -17,9 +16,9 @@
 
 <body>
     <div id="overlay"></div>
-    <a-scene embedded arjs='sourceType: webcam;' webxr="requiredFeatures: hit-test; 
-           optionalFeatures: dom-overlay, local-floor;
-           overlayElement: #overlay;" vr-mode-ui="enabled: true" ar-mode-ui="enabled: true"
+    <a-scene webxr="requiredFeatures: hit-test; 
+    optionalFeatures: dom-overlay, local-floor;
+    overlayElement: #overlay;" vr-mode-ui="enabled: true" ar-mode-ui="enabled: true"
         device-orientation-permission-ui="enabled: true" renderer="colorManagement: true">
         <a-assets>
             <!-- Poker table model -->
@@ -103,36 +102,30 @@
             </a-camera> <!-- /camera -->
         </a-entity>
 
-        <!--
-        <a-plane position="0 7.5 10" visible="false" rotation="0 180 0" width="20" height="15"
+
+        <a-plane position="0 7.5 10" rotation="0 180 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
-        <!- Back Wall
-        <a-plane class="room-element" visible="false" position="0 7.5 -10" rotation="0 0 0" width="20" height="15"
+        <a-plane class="room-element" position="0 7.5 -10" rotation="0 0 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
-        Left Wall 
-        <a-plane class="room-element" visible="false" position="-10 7.5 0" rotation="0 90 0" width="20" height="15"
+        <a-plane class="room-element" position="-10 7.5 0" rotation="0 90 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
-        Right Wall 
-        <a-plane class="room-element" visible="false" position="10 7.5 0" rotation="0 -90 0" width="20" height="15"
+        <a-plane class="room-element" position="10 7.5 0" rotation="0 -90 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
-        Floor 
-        <a-plane class="room-element" visible="false" position="0 0 0" rotation="-90 0 0" width="20" height="20"
+        <a-plane class="room-element" position="0 0 0" rotation="-90 0 0" width="20" height="20"
             material="src: #floor-texture; repeat: 8 8">
         </a-plane>
 
-        <!- Ceiling --
-        <a-plane class="room-element" visible="false" position="0 15 0" rotation="90 0 0" width="20" height="20"
-            color="#8B4513">
+        <a-plane class="room-element" position="0 15 0" rotation="90 0 0" width="20" height="20" color="#8B4513">
         </a-plane>
-    -->
+
         <!-- Poker Table -->
         <a-entity id="poker-table" gltf-model="#poker-table" position="0 0 -2" scale="2.8 2.8 2.8">
         </a-entity>
@@ -316,6 +309,24 @@
                 gameManager.removeChild(gameManager.firstChild);
             }
         }
+
+        const sceneEl = document.querySelector('a-scene');
+
+        sceneEl.addEventListener('loaded', () => {
+            // Event für den Wechsel in AR/VR-Modus
+            sceneEl.addEventListener('enter-vr', () => {
+                // Prüfe, ob der AR-Modus aktiv ist
+                const isAR = sceneEl.renderer.xr.getSession().environmentBlendMode === 'additive' ||
+                    sceneEl.renderer.xr.getSession().environmentBlendMode === 'alpha-blend';
+
+                // Wände ein- oder ausblenden
+                document.querySelectorAll('.room-element').forEach(el => {
+                    el.setAttribute('visible', !isAR); // Blende Wände im AR-Modus aus
+                });
+
+                console.log(isAR ? "AR-Modus aktiv" : "VR-Modus aktiv");
+            });
+        });
     </script>
 </body>
 
