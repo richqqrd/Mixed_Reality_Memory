@@ -96,13 +96,9 @@
         <a-entity id="cameraRig" position="0 2 -10" rotation="0 180 0">
             <a-camera look-controls wasd-controls position="0 1.6 0">
                 <a-gui-cursor id="cursor" raycaster="objects: [gui-interactable], .card" fuse="true" fuse-timeout="2000"
-                    color="#ECEFF1" hover-color="#CFD8DC" active-color="#607D8B" design="ring">
-                    <!-- dot, ring, reticle, cross  -->
-                </a-gui-cursor> <!-- /cursor -->
-                <a-entity raycaster="objects: .card; far: 10; interval: 1000"
-                    cursor="fuse: false; rayOrigin: mouse"></a-entity>
-
-            </a-camera> <!-- /camera -->
+                    color="#ECEFF1" hover-color="#CFD8DC" active-color="#607D8B" design="ring" visible="true">
+                </a-gui-cursor>
+            </a-camera>
         </a-entity>
 
 
@@ -321,6 +317,14 @@
             sceneEl.addEventListener('enter-vr', () => {
                 const isAR = sceneEl.renderer.xr.getSession().environmentBlendMode === 'additive' ||
                     sceneEl.renderer.xr.getSession().environmentBlendMode === 'alpha-blend';
+
+                if (isAR) {
+                    // Verstecke den Cursor im AR-Modus
+                    cursorEl.setAttribute('visible', false);
+                } else {
+                    // Zeige den Cursor im VR-Modus
+                    cursorEl.setAttribute('visible', true);
+                }
 
                 // Elemente mit der Klasse "ar-exclude" ein- oder ausblenden
                 document.querySelectorAll('.ar-exclude').forEach(el => {

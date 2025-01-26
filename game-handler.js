@@ -45,13 +45,15 @@ AFRAME.registerComponent('game-manager', {
 
         // Create cards in 4x4 grid
         const spacing = isAR ? 0.2 : 0.4; // Smaller spacing in AR
+        const startPosition = isAR ? { x: -0.6, z: -0.6 } : { x: -0.8, z: -0.8 };
+
         for (let row = 0; row < 4; row++) {
             for (let col = 0; col < 4; col++) {
                 const cardIndex = row * 4 + col;
                 if (cardIndex < cards.length) {
                     this.createCard(
-                        col * spacing,
-                        row * spacing,
+                        startPosition.x + col * spacing,
+                        startPosition.z + row * spacing,
                         cards[cardIndex],
                         isAR
                     );
@@ -68,9 +70,9 @@ AFRAME.registerComponent('game-manager', {
         return array;
     },
 
-    createCard: function (x, y, cardType, isAR) {
+    createCard: function (x, z, cardType, isAR) {
         const card = document.createElement('a-box');
-        card.setAttribute('position', `${x} 0 ${y}`);
+        card.setAttribute('position', `${x} 0 ${z}`);
         card.setAttribute('rotation', '-90 0 0');
         card.setAttribute('depth', '0.001');
         card.setAttribute('height', isAR ? 0.15 : 0.3); // Smaller in AR
@@ -87,9 +89,6 @@ AFRAME.registerComponent('game-manager', {
 AFRAME.registerComponent('card-handler', {
     init: function () {
         this.isFlipped = false;
-        const el = this.el;
-        const scene = document.querySelector('a-scene');
-        const isAR = scene.is('ar-mode');
 
         // Static variables for all cards
         if (!AFRAME.cardState) {
@@ -100,22 +99,9 @@ AFRAME.registerComponent('card-handler', {
             };
         }
 
-
-        if (isAR) {
-            // Touch events for AR
-            this.el.addEventListener('raycaster-intersected', this.onCardSelect.bind(this));
-        } else {
-
-            this.el.addEventListener('mouseenter', function () {
-                this.setAttribute('scale', '1.1 1.1 1.1');
-            });
-
-            this.el.addEventListener('mouseleave', function () {
-                this.setAttribute('scale', '1 1 1');
-            });
-
-            this.el.addEventListener('click', this.onCardSelect.bind(this));
-        }
+        // Event listeners für VR und AR
+        this.el.addEventListener('click', this.onCardSelect.bind(this)); // Für VR/Desktop
+        this.el.addEventListener('touchstart', this.onCardSelect.bind(this)); // Für AR
     },
 
     onCardSelect: function () {
@@ -138,6 +124,7 @@ AFRAME.registerComponent('card-handler', {
             AFRAME.cardState.canFlip = false;
 
             if (firstCardType === cardType) {
+                // Karten passen
                 window.pairsFound++;
                 if (typeof window.updatePairsFound === 'function') {
                     window.updatePairsFound();
@@ -147,6 +134,7 @@ AFRAME.registerComponent('card-handler', {
                 AFRAME.cardState.secondCard = null;
                 AFRAME.cardState.canFlip = true;
             } else {
+                // Karten passen nicht
                 setTimeout(() => {
                     AFRAME.cardState.firstCard.setAttribute('material', 'src: #card-back; side: double');
                     AFRAME.cardState.secondCard.setAttribute('material', 'src: #card-back; side: double');
