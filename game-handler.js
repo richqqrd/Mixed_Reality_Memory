@@ -103,7 +103,7 @@ AFRAME.registerComponent('card-handler', {
 
         if (isAR) {
             // Touch events for AR
-            this.el.addEventListener('touchstart', this.onCardSelect.bind(this));
+            this.el.addEventListener('raycaster-intersected', this.onCardSelect.bind(this));
         } else {
 
             this.el.addEventListener('mouseenter', function () {

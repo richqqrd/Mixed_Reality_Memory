@@ -99,6 +99,9 @@
                     color="#ECEFF1" hover-color="#CFD8DC" active-color="#607D8B" design="ring">
                     <!-- dot, ring, reticle, cross  -->
                 </a-gui-cursor> <!-- /cursor -->
+                <a-entity raycaster="objects: .card; far: 10; interval: 1000"
+                    cursor="fuse: false; rayOrigin: mouse"></a-entity>
+
             </a-camera> <!-- /camera -->
         </a-entity>
 
