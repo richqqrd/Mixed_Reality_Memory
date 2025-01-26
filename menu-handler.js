@@ -1,32 +1,42 @@
 AFRAME.registerComponent('menu-handler', {
     init: function () {
-        const flexContainer = document.createElement('a-gui-flex-container');
+        // Init code here if needed
+    },
 
-        // Set container attributes
-        flexContainer.setAttribute('flex-direction', 'column');
-        flexContainer.setAttribute('justify-content', 'center');
-        flexContainer.setAttribute('align-items', 'normal');
-        flexContainer.setAttribute('component-padding', '0.1');
-        flexContainer.setAttribute('opacity', '0.7');
-        flexContainer.setAttribute('width', '3.5');
-        flexContainer.setAttribute('height', '4.5');
-        flexContainer.setAttribute('panel-color', '#072B73');
-        flexContainer.setAttribute('panel-rounded', '0.2');
+    startGame: function () {
+        console.log('Starting game');
+        const gameManager = document.querySelector('[game-manager]').components['game-manager'];
+        // TODO: Add start game logic
+    },
 
-        // Create buttons
-        const buttonLabels = ['Start Game', 'Reset Game', 'Exit'];
-        buttonLabels.forEach(label => {
-            const button = document.createElement('a-gui-button');
-            button.setAttribute('width', '2.5');
-            button.setAttribute('height', '0.75');
-            button.setAttribute('value', label);
-            button.setAttribute('font-size', '0.25');
-            button.setAttribute('margin', '0 0 0.2 0');
+    resetGame: function () {
+        console.log('Resetting game');
+        const gameManager = document.querySelector('[game-manager]').components['game-manager'];
+        // TODO: Add reset game logic
+    },
 
-            flexContainer.appendChild(button);
-        });
+    exitGame: function () {
+        console.log("Exiting game...");
+        const scene = document.querySelector('a-scene');
 
-        // Add container to menu entity
-        this.el.appendChild(flexContainer);
+        // Abschiedsbildschirm anzeigen
+        const exitText = document.createElement('a-text');
+        exitText.setAttribute('value', 'Thank you for playing!');
+        exitText.setAttribute('position', '0 2 -3');
+        exitText.setAttribute('color', '#FF0000');
+        exitText.setAttribute('align', 'center');
+        scene.appendChild(exitText);
+
+        // Überprüfen, ob eine WebXR-Session aktiv ist
+        const xrSession = scene.renderer.xr.getSession();
+        if (xrSession) {
+            // Prüfen, ob es sich um AR oder VR handelt
+            if (xrSession.environmentBlendMode === "opaque") {
+                console.log("VR session ending...");
+            } else if (xrSession.environmentBlendMode === "alpha-blend") {
+                console.log("AR session ending...");
+            }
+            xrSession.end(); // WebXR-Sitzung beenden
+        }
     }
 });
