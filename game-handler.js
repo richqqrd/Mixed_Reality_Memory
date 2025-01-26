@@ -80,14 +80,6 @@ AFRAME.registerComponent('game-manager', {
         card.setAttribute('card-handler', '');
         card.setAttribute('class', 'card');
 
-        if (isAR) {
-            card.setAttribute('raycaster', {
-                objects: '.card',
-                far: 100,
-                near: 0
-            });
-        }
-
         this.el.appendChild(card);
     }
 });
