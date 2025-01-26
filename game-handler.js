@@ -2,19 +2,15 @@ AFRAME.registerComponent('game-manager', {
     init: function () {
         // Available card textures
         this.cardTypes = [
-            // Clubs
             '#club2', '#club3', '#club4', '#club5', '#club6',
             '#club7', '#club8', '#club9', '#club10',
             '#clubJ', '#clubQ', '#clubK', '#clubA',
-            // Hearts
             '#heart2', '#heart3', '#heart4', '#heart5', '#heart6',
             '#heart7', '#heart8', '#heart9', '#heart10',
             '#heartJ', '#heartQ', '#heartK', '#heartA',
-            // Diamonds
             '#diamond2', '#diamond3', '#diamond4', '#diamond5', '#diamond6',
             '#diamond7', '#diamond8', '#diamond9', '#diamond10',
             '#diamondJ', '#diamondQ', '#diamondK', '#diamondA',
-            // Spades
             '#spade2', '#spade3', '#spade4', '#spade5', '#spade6',
             '#spade7', '#spade8', '#spade9', '#spade10',
             '#spadeJ', '#spadeQ', '#spadeK', '#spadeA'
@@ -34,40 +30,39 @@ AFRAME.registerComponent('game-manager', {
         while (this.el.firstChild) {
             this.el.removeChild(this.el.firstChild);
         }
+
         if (isAR) {
-            // Warte auf Hit-Test-Ergebnisse
-            this.initARPlacement(scene);
+            this.waitForARPlacement(scene);
         } else {
-            // Karten direkt für VR/Desktop platzieren
-            this.createCardsGrid({ x: -0.8, z: -0.8 }, 0.4);
+            this.createCardsGrid({ x: -0.8, z: -0.8 }, 0.4); // VR/Desktop-Modus
         }
     },
 
-    initARPlacement: function (scene) {
+    waitForARPlacement: function (scene) {
         const self = this;
-
-        // AR Hit-Test-Integration
         const xrSession = scene.renderer.xr.getSession();
-        if (xrSession) {
-            const viewerSpace = scene.renderer.xr.getReferenceSpace();
-            xrSession.requestReferenceSpace('viewer').then((refSpace) => {
-                xrSession.requestHitTestSource({ space: viewerSpace }).then((hitTestSource) => {
-                    scene.addEventListener('click', (event) => {
-                        const frame = event.detail.frame;
-                        const hitTestResults = frame.getHitTestResults(hitTestSource);
-                        if (hitTestResults.length > 0) {
-                            const hit = hitTestResults[0];
-                            const position = hit.getPose(refSpace).transform.position;
 
-                            // Platziere Karten stabil auf der Oberfläche
-                            self.createCardsGrid({ x: position.x, z: position.z }, 0.2);
+        if (xrSession) {
+            xrSession.requestReferenceSpace('viewer').then((refSpace) => {
+                xrSession.requestHitTestSource({ space: refSpace }).then((hitTestSource) => {
+                    scene.addEventListener('click', (event) => {
+                        const frame = event.detail && event.detail.frame;
+
+                        if (frame) {
+                            const hitTestResults = frame.getHitTestResults(hitTestSource);
+                            if (hitTestResults.length > 0) {
+                                const hit = hitTestResults[0];
+                                const position = hit.getPose(refSpace).transform.position;
+
+                                // Platziere Karten an der getippten Stelle
+                                self.createCardsGrid({ x: position.x, z: position.z }, 0.2);
+                            }
                         }
                     });
                 });
             });
         }
     },
-
 
     createCardsGrid: function (startPosition, spacing) {
         const selectedCards = this.selectRandomCards(8);
@@ -99,13 +94,13 @@ AFRAME.registerComponent('game-manager', {
         return array;
     },
 
-    createCard: function (x, z, cardType, isAR) {
+    createCard: function (x, z, cardType) {
         const card = document.createElement('a-box');
         card.setAttribute('position', `${x} 0 ${z}`);
         card.setAttribute('rotation', '-90 0 0');
         card.setAttribute('depth', '0.001');
-        card.setAttribute('height', isAR ? 0.15 : 0.3); // Smaller in AR
-        card.setAttribute('width', isAR ? 0.1 : 0.2);   // Smaller in AR
+        card.setAttribute('height', '0.15');
+        card.setAttribute('width', '0.1');
         card.setAttribute('material', 'src: #card-back; side: double');
         card.setAttribute('data-card', cardType);
         card.setAttribute('card-handler', '');
@@ -128,9 +123,7 @@ AFRAME.registerComponent('card-handler', {
             };
         }
 
-        // Event listeners für VR und AR
-        this.el.addEventListener('click', this.onCardSelect.bind(this)); // Für VR/Desktop
-        this.el.addEventListener('touchstart', this.onCardSelect.bind(this)); // Für AR
+        this.el.addEventListener('click', this.onCardSelect.bind(this));
     },
 
     onCardSelect: function () {
@@ -143,8 +136,7 @@ AFRAME.registerComponent('card-handler', {
             AFRAME.cardState.firstCard = this.el;
             this.isFlipped = true;
             this.el.setAttribute('material', `src: ${cardType}; side: double`);
-        }
-        else if (!AFRAME.cardState.secondCard && this.el !== AFRAME.cardState.firstCard) {
+        } else if (!AFRAME.cardState.secondCard && this.el !== AFRAME.cardState.firstCard) {
             AFRAME.cardState.secondCard = this.el;
             this.isFlipped = true;
             this.el.setAttribute('material', `src: ${cardType}; side: double`);
@@ -153,7 +145,6 @@ AFRAME.registerComponent('card-handler', {
             AFRAME.cardState.canFlip = false;
 
             if (firstCardType === cardType) {
-                // Karten passen
                 window.pairsFound++;
                 if (typeof window.updatePairsFound === 'function') {
                     window.updatePairsFound();
@@ -163,7 +154,6 @@ AFRAME.registerComponent('card-handler', {
                 AFRAME.cardState.secondCard = null;
                 AFRAME.cardState.canFlip = true;
             } else {
-                // Karten passen nicht
                 setTimeout(() => {
                     AFRAME.cardState.firstCard.setAttribute('material', 'src: #card-back; side: double');
                     AFRAME.cardState.secondCard.setAttribute('material', 'src: #card-back; side: double');
