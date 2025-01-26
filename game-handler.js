@@ -27,6 +27,9 @@ AFRAME.registerComponent('game-manager', {
     },
 
     startNewGame: function () {
+        const scene = document.querySelector('a-scene');
+        const isAR = scene.is('ar-mode');
+
         // Clear existing cards
         while (this.el.firstChild) {
             this.el.removeChild(this.el.firstChild);
@@ -41,7 +44,7 @@ AFRAME.registerComponent('game-manager', {
         cards = this.shuffleArray(cards);
 
         // Create cards in 4x4 grid
-        const spacing = 0.4;
+        const spacing = isAR ? 0.2 : 0.4; // Smaller spacing in AR
         for (let row = 0; row < 4; row++) {
             for (let col = 0; col < 4; col++) {
                 const cardIndex = row * 4 + col;
@@ -49,7 +52,8 @@ AFRAME.registerComponent('game-manager', {
                     this.createCard(
                         col * spacing,
                         row * spacing,
-                        cards[cardIndex]
+                        cards[cardIndex],
+                        isAR
                     );
                 }
             }
@@ -64,17 +68,26 @@ AFRAME.registerComponent('game-manager', {
         return array;
     },
 
-    createCard: function (x, y, cardType) {
+    createCard: function (x, y, cardType, isAR) {
         const card = document.createElement('a-box');
         card.setAttribute('position', `${x} 0 ${y}`);
         card.setAttribute('rotation', '-90 0 0');
         card.setAttribute('depth', '0.001');
-        card.setAttribute('height', '0.3');
-        card.setAttribute('width', '0.2');
+        card.setAttribute('height', isAR ? 0.15 : 0.3); // Smaller in AR
+        card.setAttribute('width', isAR ? 0.1 : 0.2);   // Smaller in AR
         card.setAttribute('material', 'src: #card-back; side: double');
         card.setAttribute('data-card', cardType);
         card.setAttribute('card-handler', '');
         card.setAttribute('class', 'card');
+
+        if (isAR) {
+            card.setAttribute('raycaster', {
+                objects: '.card',
+                far: 100,
+                near: 0
+            });
+        }
+
         this.el.appendChild(card);
     }
 });
@@ -83,6 +96,8 @@ AFRAME.registerComponent('card-handler', {
     init: function () {
         this.isFlipped = false;
         const el = this.el;
+        const scene = document.querySelector('a-scene');
+        const isAR = scene.is('ar-mode');
 
         // Static variables for all cards
         if (!AFRAME.cardState) {
@@ -93,55 +108,63 @@ AFRAME.registerComponent('card-handler', {
             };
         }
 
-        this.el.addEventListener('mouseenter', function () {
-            this.setAttribute('scale', '1.1 1.1 1.1');
-        });
 
-        this.el.addEventListener('mouseleave', function () {
-            this.setAttribute('scale', '1 1 1');
-        });
+        if (isAR) {
+            // Touch events for AR
+            this.el.addEventListener('touchstart', this.onCardSelect.bind(this));
+        } else {
 
-        this.el.addEventListener('click', () => {
-            if (!AFRAME.cardState.canFlip) return;
-            if (this.isFlipped) return;
+            this.el.addEventListener('mouseenter', function () {
+                this.setAttribute('scale', '1.1 1.1 1.1');
+            });
 
-            const cardType = this.el.getAttribute('data-card');
+            this.el.addEventListener('mouseleave', function () {
+                this.setAttribute('scale', '1 1 1');
+            });
 
-            if (!AFRAME.cardState.firstCard) {
-                AFRAME.cardState.firstCard = this.el;
-                this.isFlipped = true;
-                this.el.setAttribute('material', `src: ${cardType}; side: double`);
-            }
-            else if (!AFRAME.cardState.secondCard && this.el !== AFRAME.cardState.firstCard) {
-                AFRAME.cardState.secondCard = this.el;
-                this.isFlipped = true;
-                this.el.setAttribute('material', `src: ${cardType}; side: double`);
+            this.el.addEventListener('click', this.onCardSelect.bind(this));
+        }
+    },
 
-                const firstCardType = AFRAME.cardState.firstCard.getAttribute('data-card');
-                AFRAME.cardState.canFlip = false;
+    onCardSelect: function () {
+        if (!AFRAME.cardState.canFlip) return;
+        if (this.isFlipped) return;
 
-                if (firstCardType === cardType) {
-                    window.pairsFound++;
-                    if (typeof window.updatePairsFound === 'function') {
-                        window.updatePairsFound();
-                    }
+        const cardType = this.el.getAttribute('data-card');
 
+        if (!AFRAME.cardState.firstCard) {
+            AFRAME.cardState.firstCard = this.el;
+            this.isFlipped = true;
+            this.el.setAttribute('material', `src: ${cardType}; side: double`);
+        }
+        else if (!AFRAME.cardState.secondCard && this.el !== AFRAME.cardState.firstCard) {
+            AFRAME.cardState.secondCard = this.el;
+            this.isFlipped = true;
+            this.el.setAttribute('material', `src: ${cardType}; side: double`);
 
+            const firstCardType = AFRAME.cardState.firstCard.getAttribute('data-card');
+            AFRAME.cardState.canFlip = false;
+
+            if (firstCardType === cardType) {
+                window.pairsFound++;
+                if (typeof window.updatePairsFound === 'function') {
+                    window.updatePairsFound();
+                }
+
+                AFRAME.cardState.firstCard = null;
+                AFRAME.cardState.secondCard = null;
+                AFRAME.cardState.canFlip = true;
+            } else {
+                setTimeout(() => {
+                    AFRAME.cardState.firstCard.setAttribute('material', 'src: #card-back; side: double');
+                    AFRAME.cardState.secondCard.setAttribute('material', 'src: #card-back; side: double');
+                    AFRAME.cardState.firstCard.components['card-handler'].isFlipped = false;
+                    AFRAME.cardState.secondCard.components['card-handler'].isFlipped = false;
                     AFRAME.cardState.firstCard = null;
                     AFRAME.cardState.secondCard = null;
                     AFRAME.cardState.canFlip = true;
-                } else {
-                    setTimeout(() => {
-                        AFRAME.cardState.firstCard.setAttribute('material', 'src: #card-back; side: double');
-                        AFRAME.cardState.secondCard.setAttribute('material', 'src: #card-back; side: double');
-                        AFRAME.cardState.firstCard.components['card-handler'].isFlipped = false;
-                        AFRAME.cardState.secondCard.components['card-handler'].isFlipped = false;
-                        AFRAME.cardState.firstCard = null;
-                        AFRAME.cardState.secondCard = null;
-                        AFRAME.cardState.canFlip = true;
-                    }, 1000);
-                }
+                }, 1000);
             }
-        });
+        }
     }
 });

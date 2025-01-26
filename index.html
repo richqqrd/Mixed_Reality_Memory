@@ -104,28 +104,29 @@
         <a-plane position="0 7.5 10" rotation="0 180 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
-
         <!-- Back Wall -->
-        <a-plane position="0 7.5 -10" rotation="0 0 0" width="20" height="15"
+        <a-plane class="room-element" position="0 7.5 -10" rotation="0 0 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
         <!-- Left Wall -->
-        <a-plane position="-10 7.5 0" rotation="0 90 0" width="20" height="15"
+        <a-plane class="room-element" position="-10 7.5 0" rotation="0 90 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
         <!-- Right Wall -->
-        <a-plane position="10 7.5 0" rotation="0 -90 0" width="20" height="15"
+        <a-plane class="room-element" position="10 7.5 0" rotation="0 -90 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
-        <!-- Floor remains the same -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" material="src: #floor-texture; repeat: 8 8">
+        <!-- Floor -->
+        <a-plane class="room-element" position="0 0 0" rotation="-90 0 0" width="20" height="20"
+            material="src: #floor-texture; repeat: 8 8">
         </a-plane>
 
         <!-- Ceiling -->
-        <a-plane position="0 15 0" rotation="90 0 0" width="20" height="20" color="#8B4513"></a-plane>
+        <a-plane class="room-element" position="0 15 0" rotation="90 0 0" width="20" height="20" color="#8B4513">
+        </a-plane>
         <!-- Poker Table -->
         <a-entity id="poker-table" gltf-model="#poker-table" position="0 0 -2" scale="2.8 2.8 2.8">
         </a-entity>
@@ -307,6 +308,20 @@
                 gameManager.removeChild(gameManager.firstChild);
             }
         }
+
+        window.addEventListener('enter-vr', function () {
+            // Show room in VR mode
+            document.querySelectorAll('.room-element').forEach(el => {
+                el.setAttribute('visible', true);
+            });
+        });
+
+        window.addEventListener('enter-ar', function () {
+            // Hide room in AR mode
+            document.querySelectorAll('.room-element').forEach(el => {
+                el.setAttribute('visible', false);
+            });
+        });
 
     </script>
 </body>
