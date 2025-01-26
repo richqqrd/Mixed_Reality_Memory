@@ -318,14 +318,6 @@
                 const isAR = sceneEl.renderer.xr.getSession().environmentBlendMode === 'additive' ||
                     sceneEl.renderer.xr.getSession().environmentBlendMode === 'alpha-blend';
 
-                if (isAR) {
-                    // Verstecke den Cursor im AR-Modus
-                    cursorEl.setAttribute('visible', false);
-                } else {
-                    // Zeige den Cursor im VR-Modus
-                    cursorEl.setAttribute('visible', true);
-                }
-
                 // Elemente mit der Klasse "ar-exclude" ein- oder ausblenden
                 document.querySelectorAll('.ar-exclude').forEach(el => {
                     el.setAttribute('visible', !isAR); // Unsichtbar im AR-Modus
