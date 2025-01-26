@@ -1,34 +1,38 @@
 AFRAME.registerComponent('game-manager', {
-    selectRandomCards: function (count) {
-        const shuffled = this.shuffleArray([...this.cardTypes]);
-        return shuffled.slice(0, count);
-    },
-
     init: function () {
-        // Verfügbare Kartentexturen
+        // Available card textures
         this.cardTypes = [
             // Clubs
             '#club2', '#club3', '#club4', '#club5', '#club6',
             '#club7', '#club8', '#club9', '#club10',
             '#clubJ', '#clubQ', '#clubK', '#clubA',
-
             // Hearts
             '#heart2', '#heart3', '#heart4', '#heart5', '#heart6',
             '#heart7', '#heart8', '#heart9', '#heart10',
             '#heartJ', '#heartQ', '#heartK', '#heartA',
-
             // Diamonds
             '#diamond2', '#diamond3', '#diamond4', '#diamond5', '#diamond6',
             '#diamond7', '#diamond8', '#diamond9', '#diamond10',
             '#diamondJ', '#diamondQ', '#diamondK', '#diamondA',
-
             // Spades
             '#spade2', '#spade3', '#spade4', '#spade5', '#spade6',
             '#spade7', '#spade8', '#spade9', '#spade10',
             '#spadeJ', '#spadeQ', '#spadeK', '#spadeA'
         ];
+    },
 
-        // Select 8 random cards for the memory game
+    selectRandomCards: function (count) {
+        const shuffledTypes = this.shuffleArray([...this.cardTypes]);
+        return shuffledTypes.slice(0, count);
+    },
+
+    startNewGame: function () {
+        // Clear existing cards
+        while (this.el.firstChild) {
+            this.el.removeChild(this.el.firstChild);
+        }
+
+        // Create new cards
         const selectedCards = this.selectRandomCards(8);
         let cards = [];
         selectedCards.forEach(card => {
@@ -36,7 +40,7 @@ AFRAME.registerComponent('game-manager', {
         });
         cards = this.shuffleArray(cards);
 
-        // Karten im 4x4 Grid erstellen
+        // Create cards in 4x4 grid
         const spacing = 0.4;
         for (let row = 0; row < 4; row++) {
             for (let col = 0; col < 4; col++) {
@@ -71,7 +75,6 @@ AFRAME.registerComponent('game-manager', {
         card.setAttribute('data-card', cardType);
         card.setAttribute('card-handler', '');
         card.setAttribute('class', 'card');
-
         this.el.appendChild(card);
     }
 });
@@ -81,7 +84,7 @@ AFRAME.registerComponent('card-handler', {
         this.isFlipped = false;
         const el = this.el;
 
-        // Statische Variablen für alle Karten
+        // Static variables for all cards
         if (!AFRAME.cardState) {
             AFRAME.cardState = {
                 firstCard: null,
@@ -98,26 +101,32 @@ AFRAME.registerComponent('card-handler', {
             this.setAttribute('scale', '1 1 1');
         });
 
-        this.el.addEventListener('click', () => { // Use arrow function to preserve 'this'
+        this.el.addEventListener('click', () => {
             if (!AFRAME.cardState.canFlip) return;
-            if (this.isFlipped) return;  // Use this.isFlipped
+            if (this.isFlipped) return;
 
             const cardType = this.el.getAttribute('data-card');
 
             if (!AFRAME.cardState.firstCard) {
                 AFRAME.cardState.firstCard = this.el;
-                this.isFlipped = true;  // Use this.isFlipped
+                this.isFlipped = true;
                 this.el.setAttribute('material', `src: ${cardType}; side: double`);
             }
             else if (!AFRAME.cardState.secondCard && this.el !== AFRAME.cardState.firstCard) {
                 AFRAME.cardState.secondCard = this.el;
-                this.isFlipped = true;  // Use this.isFlipped
+                this.isFlipped = true;
                 this.el.setAttribute('material', `src: ${cardType}; side: double`);
 
                 const firstCardType = AFRAME.cardState.firstCard.getAttribute('data-card');
                 AFRAME.cardState.canFlip = false;
 
                 if (firstCardType === cardType) {
+                    window.pairsFound++;
+                    if (typeof window.updatePairsFound === 'function') {
+                        window.updatePairsFound();
+                    }
+
+
                     AFRAME.cardState.firstCard = null;
                     AFRAME.cardState.secondCard = null;
                     AFRAME.cardState.canFlip = true;
@@ -125,7 +134,6 @@ AFRAME.registerComponent('card-handler', {
                     setTimeout(() => {
                         AFRAME.cardState.firstCard.setAttribute('material', 'src: #card-back; side: double');
                         AFRAME.cardState.secondCard.setAttribute('material', 'src: #card-back; side: double');
-                        // Correctly access the component instances
                         AFRAME.cardState.firstCard.components['card-handler'].isFlipped = false;
                         AFRAME.cardState.secondCard.components['card-handler'].isFlipped = false;
                         AFRAME.cardState.firstCard = null;
