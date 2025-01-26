@@ -315,16 +315,28 @@
         sceneEl.addEventListener('loaded', () => {
             // Event für den Wechsel in AR/VR-Modus
             sceneEl.addEventListener('enter-vr', () => {
-                // Prüfe, ob der AR-Modus aktiv ist
                 const isAR = sceneEl.renderer.xr.getSession().environmentBlendMode === 'additive' ||
                     sceneEl.renderer.xr.getSession().environmentBlendMode === 'alpha-blend';
 
-                // Wände ein- oder ausblenden
-                document.querySelectorAll('.room-element').forEach(el => {
-                    el.setAttribute('visible', !isAR); // Blende Wände im AR-Modus aus
-                });
+                if (isAR) {
+                    // Deaktiviere Skybox
+                    const skyEl = document.querySelector('a-sky');
+                    if (skyEl) {
+                        skyEl.setAttribute('visible', false);
+                    }
 
-                console.log(isAR ? "AR-Modus aktiv" : "VR-Modus aktiv");
+                    // Setze den Hintergrund des Renderers auf transparent
+                    sceneEl.renderer.setClearColor(new THREE.Color(0x000000), 0); // Transparenter Hintergrund
+                } else {
+                    // Reaktiviere Skybox und Hintergrundfarbe für VR
+                    const skyEl = document.querySelector('a-sky');
+                    if (skyEl) {
+                        skyEl.setAttribute('visible', true);
+                    }
+
+                    // Setze eine Hintergrundfarbe für VR
+                    sceneEl.renderer.setClearColor(new THREE.Color(0x111111), 1); // Dunkler Hintergrund
+                }
             });
         });
     </script>
