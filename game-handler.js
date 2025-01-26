@@ -31,37 +31,10 @@ AFRAME.registerComponent('game-manager', {
             this.el.removeChild(this.el.firstChild);
         }
 
-        if (isAR) {
-            this.waitForARPlacement(scene);
-        } else {
-            this.createCardsGrid({ x: -0.8, z: -0.8 }, 0.4); // VR/Desktop-Modus
-        }
-    },
-
-    waitForARPlacement: function (scene) {
-        const self = this;
-        const xrSession = scene.renderer.xr.getSession();
-
-        if (xrSession) {
-            xrSession.requestReferenceSpace('viewer').then((refSpace) => {
-                xrSession.requestHitTestSource({ space: refSpace }).then((hitTestSource) => {
-                    scene.addEventListener('click', (event) => {
-                        const frame = event.detail && event.detail.frame;
-
-                        if (frame) {
-                            const hitTestResults = frame.getHitTestResults(hitTestSource);
-                            if (hitTestResults.length > 0) {
-                                const hit = hitTestResults[0];
-                                const position = hit.getPose(refSpace).transform.position;
-
-                                // Platziere Karten an der getippten Stelle
-                                self.createCardsGrid({ x: position.x, z: position.z }, 0.2);
-                            }
-                        }
-                    });
-                });
-            });
-        }
+        // Karten direkt für AR oder VR/Desktop platzieren
+        const startPosition = isAR ? { x: -0.5, z: -0.5 } : { x: -0.8, z: -0.8 };
+        const spacing = isAR ? 0.2 : 0.4; // Kleinere Abstände in AR
+        this.createCardsGrid(startPosition, spacing);
     },
 
     createCardsGrid: function (startPosition, spacing) {
@@ -96,10 +69,10 @@ AFRAME.registerComponent('game-manager', {
 
     createCard: function (x, z, cardType) {
         const card = document.createElement('a-box');
-        card.setAttribute('position', `${x} 0 ${z}`);
+        card.setAttribute('position', `${x} 0.01 ${z}`);
         card.setAttribute('rotation', '-90 0 0');
         card.setAttribute('depth', '0.001');
-        card.setAttribute('height', '0.15');
+        card.setAttribute('height', '0.15'); // Einheitliche Größe
         card.setAttribute('width', '0.1');
         card.setAttribute('material', 'src: #card-back; side: double');
         card.setAttribute('data-card', cardType);
@@ -114,7 +87,6 @@ AFRAME.registerComponent('card-handler', {
     init: function () {
         this.isFlipped = false;
 
-        // Static variables for all cards
         if (!AFRAME.cardState) {
             AFRAME.cardState = {
                 firstCard: null,
