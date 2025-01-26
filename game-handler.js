@@ -95,7 +95,8 @@ AFRAME.registerComponent('card-handler', {
             };
         }
 
-        this.el.addEventListener('click', this.onCardSelect.bind(this));
+        this.el.addEventListener('click', this.onCardSelect.bind(this)); // Für VR/Desktop
+        this.el.addEventListener('touchstart', this.onCardSelect.bind(this)); // Für AR
     },
 
     onCardSelect: function () {

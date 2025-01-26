@@ -98,6 +98,8 @@
                 <a-gui-cursor id="cursor" raycaster="objects: [gui-interactable], .card" fuse="true" fuse-timeout="2000"
                     color="#ECEFF1" hover-color="#CFD8DC" active-color="#607D8B" design="ring" visible="true">
                 </a-gui-cursor>
+                <a-entity cursor="rayOrigin: mouse" raycaster="objects: .card; far: 10;" visible="false">
+                </a-entity>
             </a-camera>
         </a-entity>
 
