@@ -103,27 +103,28 @@
         </a-entity>
 
 
-        <a-plane position="0 7.5 10" rotation="0 180 0" width="20" height="15"
+        <a-plane class="room-element ar-exclude" position="0 7.5 10" rotation="0 180 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
-        <a-plane class="room-element" position="0 7.5 -10" rotation="0 0 0" width="20" height="15"
+        <a-plane class="room-element ar-exclude" position="0 7.5 -10" rotation="0 0 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
-        <a-plane class="room-element" position="-10 7.5 0" rotation="0 90 0" width="20" height="15"
+        <a-plane class="room-element ar-exclude" position="-10 7.5 0" rotation="0 90 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
-        <a-plane class="room-element" position="10 7.5 0" rotation="0 -90 0" width="20" height="15"
+        <a-plane class="room-element ar-exclude" position="10 7.5 0" rotation="0 -90 0" width="20" height="15"
             material="src: #wall-texture; repeat: 8 6; side: double">
         </a-plane>
 
-        <a-plane class="room-element" position="0 0 0" rotation="-90 0 0" width="20" height="20"
+        <a-plane class="room-element ar-exclude" position="0 0 0" rotation="-90 0 0" width="20" height="20"
             material="src: #floor-texture; repeat: 8 8">
         </a-plane>
 
-        <a-plane class="room-element" position="0 15 0" rotation="90 0 0" width="20" height="20" color="#8B4513">
+        <a-plane class="room-element ar-exclude" position="0 15 0" rotation="90 0 0" width="20" height="20"
+            color="#8B4513">
         </a-plane>
 
         <!-- Poker Table -->
@@ -318,6 +319,11 @@
                 const isAR = sceneEl.renderer.xr.getSession().environmentBlendMode === 'additive' ||
                     sceneEl.renderer.xr.getSession().environmentBlendMode === 'alpha-blend';
 
+                // Elemente mit der Klasse "ar-exclude" ein- oder ausblenden
+                document.querySelectorAll('.ar-exclude').forEach(el => {
+                    el.setAttribute('visible', !isAR); // Unsichtbar im AR-Modus
+                });
+
                 if (isAR) {
                     // Deaktiviere Skybox
                     const skyEl = document.querySelector('a-sky');
@@ -339,6 +345,7 @@
                 }
             });
         });
+
     </script>
 </body>
 
