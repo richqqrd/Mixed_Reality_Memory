@@ -32,12 +32,13 @@ AFRAME.registerComponent('game-manager', {
         }
 
         // Karten direkt für AR oder VR/Desktop platzieren
-        const startPosition = isAR ? { x: -0.5, z: -0.5 } : { x: -0.8, z: -0.8 };
+        const startPosition = isAR ? { x: -0.5, z: -0.5 } : { x: -0.1, z: 0 }; // Adjust VR start position here
         const spacing = isAR ? 0.2 : 0.4; // Kleinere Abstände in AR
-        this.createCardsGrid(startPosition, spacing);
+        const size = isAR ? { width: 0.1, height: 0.15 } : { width: 0.2, height: 0.3 }; // Größere Karten in VR
+        this.createCardsGrid(startPosition, spacing, size);
     },
 
-    createCardsGrid: function (startPosition, spacing) {
+    createCardsGrid: function (startPosition, spacing, size) {
         const selectedCards = this.selectRandomCards(8);
         let cards = [];
         selectedCards.forEach(card => {
@@ -52,7 +53,8 @@ AFRAME.registerComponent('game-manager', {
                     this.createCard(
                         startPosition.x + col * spacing,
                         startPosition.z + row * spacing,
-                        cards[cardIndex]
+                        cards[cardIndex],
+                        size
                     );
                 }
             }
@@ -67,13 +69,13 @@ AFRAME.registerComponent('game-manager', {
         return array;
     },
 
-    createCard: function (x, z, cardType) {
+    createCard: function (x, z, cardType, size) {
         const card = document.createElement('a-box');
         card.setAttribute('position', `${x} 0.01 ${z}`);
         card.setAttribute('rotation', '-90 0 0');
         card.setAttribute('depth', '0.001');
-        card.setAttribute('height', '0.15'); // Einheitliche Größe
-        card.setAttribute('width', '0.1');
+        card.setAttribute('height', size.height); // Einheitliche Größe
+        card.setAttribute('width', size.width);
         card.setAttribute('material', 'src: #card-back; side: double');
         card.setAttribute('data-card', cardType);
         card.setAttribute('card-handler', '');
