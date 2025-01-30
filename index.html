@@ -17,10 +17,15 @@
 <body>
     <div id="overlay"></div>
     <a-scene webxr="requiredFeatures: hit-test; 
-    optionalFeatures: dom-overlay, local-floor;
+    optionalFeatures: dom-overlay, local-floor, hand-tracking;
     overlayElement: #overlay;" vr-mode-ui="enabled: true" ar-mode-ui="enabled: true"
         device-orientation-permission-ui="enabled: true" renderer="colorManagement: true">
         <a-assets>
+
+            <!-- Hand Tracking -->
+            <a-entity id="leftHand" hand-tracking-controls="hand: left"></a-entity>
+            <a-entity id="rightHand" hand-tracking-controls="hand: right"></a-entity>
+
             <!-- Poker table model -->
             <a-asset-item id="poker-table" src="res/sm_pokertable.glb"></a-asset-item>
 
@@ -346,6 +351,24 @@
                 }
             });
         });
+
+        function detectPinch() {
+            const leftHand = document.querySelector('#leftHand');
+            const rightHand = document.querySelector('#rightHand');
+
+            if (leftHand.components['hand-tracking-controls'] || rightHand.components['hand-tracking-controls']) {
+                console.log("Handtracking aktiv");
+
+                leftHand.addEventListener('pinchstarted', () => {
+                    console.log("Linke Hand Pinch erkannt");
+                });
+                rightHand.addEventListener('pinchstarted', () => {
+                    console.log("Rechte Hand Pinch erkannt");
+                });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", detectPinch);
 
     </script>
 </body>
