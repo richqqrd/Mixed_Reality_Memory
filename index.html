@@ -105,12 +105,14 @@
                 </a-gui-cursor>
                 <a-entity cursor="rayOrigin: mouse" raycaster="objects: .card; far: 10;" visible="false">
                 </a-entity>
+                <!-- Hand Tracking -->
+                <a-entity id="leftHand" hand-controls="hand: left; handModelStyle: lowPoly; color: #ffcccc"></a-entity>
+                <a-entity id="rightHand"
+                    hand-controls="hand: right; handModelStyle: lowPoly; color: #ffcccc"></a-entity>
             </a-camera>
         </a-entity>
 
-        <!-- Hand Tracking -->
-        <a-entity id="leftHand" hand-controls="hand: left; handModelStyle: lowPoly; color: #ffcccc"></a-entity>
-        <a-entity id="rightHand" hand-controls="hand: right; handModelStyle: lowPoly; color: #ffcccc"></a-entity>
+
 
 
         <a-plane class="room-element ar-exclude" position="0 7.5 10" rotation="0 180 0" width="20" height="15"
