@@ -11,7 +11,6 @@
 
     <script src="game-handler.js"></script>
     <script src="menu-handler.js"></script>
-
 </head>
 
 <body>
@@ -155,10 +154,10 @@
                     background-color="#4CAF50" hover-color="#45A049" active-color="#388E3C" onclick="startGame()"
                     margin="0 0 0.2 0"></a-gui-button>
 
-                <!-- Options Button -->
-                <a-gui-button width="2.5" height="0.7" value="Options" font-size="0.4" font-color="#FFFFFF"
-                    background-color="#2196F3" hover-color="#1976D2" active-color="#0D47A1" onclick="showOptions()"
-                    margin="0 0 0.2 0"></a-gui-button>
+                <a-gui-button width="2.5" height="0.7" value="Leaderboard" font-size="0.4" font-color="#FFFFFF"
+                    background-color="#888CB7" hover-color="#6B6B6B" active-color="#545454" onclick="showLeaderboard()"
+                    margin="0 0 0.2 0">
+                </a-gui-button>
 
                 <!-- Exit Button -->
                 <a-gui-button width="2.5" height="0.7" value="Exit" font-size="0.4" font-color="#FFFFFF"
@@ -207,6 +206,30 @@
 
                 <a-gui-label id="finalPairsLabel" width="3" height="0.4" value="Pairs Found: 0" font-size="0.3"
                     font-color="#000000" background-color="#FFFFFF"></a-gui-label>
+            </a-gui-flex-container>
+        </a-entity>
+
+        <!-- Leaderboard Menu -->
+        <a-entity id="leaderboardMenu" position="0 2.5 -5" rotation="0 180 0" visible="false">
+            <a-gui-flex-container width="3" height="3" panel-color="#222" opacity="0.8" flex-direction="column"
+                align-items="center" justify-content="flex-start">
+                <a-gui-label value="Leaderboard" width="2.5" height="0.5" font-size="0.3" background-color="#444"
+                    margin="0 0 0.2 0">
+                </a-gui-label>
+                <a-gui-label value="1. Alice (02:15)" width="2.5" height="0.4" font-size="0.2" font-color="#FFFFFF"
+                    background-color="#333" margin="0 0 0.1 0">
+                </a-gui-label>
+                <a-gui-label value="2. Bob (03:10)" width="2.5" height="0.4" font-size="0.2" font-color="#FFFFFF"
+                    background-color="#333" margin="0 0 0.1 0">
+                </a-gui-label>
+                <a-gui-label value="3. Charlie (04:05)" width="2.5" height="0.4" font-size="0.2" font-color="#FFFFFF"
+                    background-color="#333" margin="0 0 0.2 0">
+                </a-gui-label>
+
+                <a-gui-button width="2" height="0.7" value="Back" font-size="0.3" font-color="#FFFFFF"
+                    background-color="#666" hover-color="#444" active-color="#222" onclick="hideLeaderboard()"
+                    margin="0 0 0.2 0">
+                </a-gui-button>
             </a-gui-flex-container>
         </a-entity>
 
@@ -405,9 +428,27 @@
             checkVictory(); // Überprüfen, ob der Spieler gewonnen hat
         };
 
+        window.showLeaderboard = function () {
+            // Hide main menu
+            const mainMenu = document.querySelector('[menu-handler]');
+            mainMenu.setAttribute('visible', false);
 
+            // Show leaderboard
+            const leaderboardMenu = document.querySelector('#leaderboardMenu');
+            leaderboardMenu.setAttribute('visible', true);
+        };
+
+        window.hideLeaderboard = function () {
+            // Hide leaderboard
+            const leaderboardMenu = document.querySelector('#leaderboardMenu');
+            leaderboardMenu.setAttribute('visible', false);
+
+            backToMenu();
+        };
 
     </script>
+
+
 </body>
 
 </html>
