@@ -23,8 +23,9 @@
         <a-assets>
 
             <!-- Hand Tracking -->
-            <a-entity id="leftHand" hand-tracking-controls="hand: left"></a-entity>
-            <a-entity id="rightHand" hand-tracking-controls="hand: right"></a-entity>
+            <a-entity id="leftHand" hand-tracking-grab-controls="hand: left;"></a-entity>
+            <a-entity id="rightHand" hand-tracking-grab-controls="hand: right;"></a-entity>
+
 
             <!-- Poker table model -->
             <a-asset-item id="poker-table" src="res/sm_pokertable.glb"></a-asset-item>
@@ -352,11 +353,12 @@
             });
         });
 
+
         function detectPinch() {
             const leftHand = document.querySelector('#leftHand');
             const rightHand = document.querySelector('#rightHand');
 
-            if (leftHand.components['hand-tracking-controls'] || rightHand.components['hand-tracking-controls']) {
+            if (leftHand.components['hand-controls'] || rightHand.components['hand-controls']) {
                 console.log("Handtracking aktiv");
 
                 leftHand.addEventListener('pinchstarted', () => {
