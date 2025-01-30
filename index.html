@@ -370,7 +370,7 @@
         });
 
         window.checkVictory = function () {
-            if (pairsFound === 10) { // Anzahl der Paare anpassen, falls nötig
+            if (pairsFound === 8) { // Anzahl der Paare anpassen, falls nötig
                 clearInterval(timerInterval); // Timer stoppen
 
                 // Aktualisiere die Victory-Anzeige
@@ -386,11 +386,14 @@
                 // Victory-Meldung einblenden
                 victoryMessage.setAttribute('visible', true);
 
+                ingameMenu.setAttribute('visible', false);
+
+
                 // Nach 3 Sekunden ins Hauptmenü zurückkehren
                 setTimeout(() => {
                     victoryMessage.setAttribute('visible', false);
                     backToMenu();
-                }, 3000);
+                }, 7000);
             }
         };
 
