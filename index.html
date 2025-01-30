@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://rawgit.com/rdub80/aframe-gui/master/dist/aframe-gui.min.js"></script>
-    <script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
 
     <script src="game-handler.js"></script>
     <script src="menu-handler.js"></script>
@@ -20,7 +19,7 @@
     <a-scene webxr="requiredFeatures: hit-test; 
     optionalFeatures: dom-overlay, local-floor, hand-tracking;
     overlayElement: #overlay;" vr-mode-ui="enabled: true" ar-mode-ui="enabled: true"
-        device-orientation-permission-ui="enabled: true" renderer="colorManagement: true" embedded arjs>
+        device-orientation-permission-ui="enabled: true" renderer="colorManagement: true">
         <a-assets>
 
             <a-asset-item id="left-hand-lowpoly" src="res/leftHandLow.glb"></a-asset-item>
@@ -97,9 +96,6 @@
             <img id="wall-texture" src="res/wall.jpg">
         </a-assets>
 
-        <a-marker type='pattern' url='res/pattern-marker.patt'>
-            <a-box position='0 0.5 0' material='color: red;'></a-box>
-        </a-marker>
         <!-- Camera -->
         <!--<a-camera position="0 3 -4"> -->
         <a-entity id="cameraRig" position="0 2 -10" rotation="0 180 0">
@@ -196,6 +192,21 @@
                     background-color="#F44336" hover-color="#E53935" active-color="#D32F2F" onclick="backToMenu()"
                     margin="0.1 0 0.1 0">
                 </a-gui-button>
+            </a-gui-flex-container>
+        </a-entity>
+
+        <a-entity id="victoryMessage" position="0 4 0" rotation="0 180 0" visible="false">
+            <a-gui-flex-container flex-direction="column" justify-content="center" align-items="center" width="3.5"
+                height="2.5" panel-color="#FFD700" opacity="0.9" panel-rounded="0.2">
+
+                <a-gui-label width="3" height="0.5" value="Victory!" font-size="0.4" font-color="#000000"
+                    background-color="#FFD700"></a-gui-label>
+
+                <a-gui-label id="finalTimeLabel" width="3" height="0.4" value="Time: 00:00" font-size="0.3"
+                    font-color="#000000" background-color="#FFFFFF"></a-gui-label>
+
+                <a-gui-label id="finalPairsLabel" width="3" height="0.4" value="Pairs Found: 0" font-size="0.3"
+                    font-color="#000000" background-color="#FFFFFF"></a-gui-label>
             </a-gui-flex-container>
         </a-entity>
 
@@ -357,6 +368,40 @@
                 }
             });
         });
+
+        window.checkVictory = function () {
+            if (pairsFound === 10) { // Anzahl der Paare anpassen, falls nötig
+                clearInterval(timerInterval); // Timer stoppen
+
+                // Aktualisiere die Victory-Anzeige
+                const victoryMessage = document.querySelector('#victoryMessage');
+                const finalTimeLabel = document.querySelector('#finalTimeLabel');
+                const finalPairsLabel = document.querySelector('#finalPairsLabel');
+
+                const minutes = Math.floor(gameTime / 60);
+                const seconds = gameTime % 60;
+                finalTimeLabel.setAttribute('value', `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+                finalPairsLabel.setAttribute('value', `Pairs Found: ${pairsFound}`);
+
+                // Victory-Meldung einblenden
+                victoryMessage.setAttribute('visible', true);
+
+                // Nach 3 Sekunden ins Hauptmenü zurückkehren
+                setTimeout(() => {
+                    victoryMessage.setAttribute('visible', false);
+                    backToMenu();
+                }, 3000);
+            }
+        };
+
+        // Rufe `checkVictory()` jedes Mal auf, wenn ein Paar gefunden wurde
+        window.updatePairsFound = function () {
+            const pairsLabel = document.querySelector('#pairsLabel');
+            pairsLabel.setAttribute('value', `Pairs Found: ${pairsFound}`);
+
+            checkVictory(); // Überprüfen, ob der Spieler gewonnen hat
+        };
+
 
 
     </script>
