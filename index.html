@@ -8,8 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://rawgit.com/rdub80/aframe-gui/master/dist/aframe-gui.min.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/gh/bryik/aframe-keyboard-component@master/dist/aframe-keyboard-component.min.js"></script>
+    <script src="dist/aframe-keyboard.min.js"></script>
 
 
     <script src="game-handler.js"></script>
@@ -21,7 +20,8 @@
     <a-scene webxr="requiredFeatures: hit-test; 
     optionalFeatures: dom-overlay, local-floor, hand-tracking;
     overlayElement: #overlay;" vr-mode-ui="enabled: true" ar-mode-ui="enabled: true"
-        device-orientation-permission-ui="enabled: true" renderer="colorManagement: true">
+        device-orientation-permission-ui="enabled: true" renderer="colorManagement: true"
+        keyboard-shortcuts="enterVR: false">
         <a-assets>
 
             <a-asset-item id="left-hand-lowpoly" src="res/leftHandLow.glb"></a-asset-item>
@@ -102,8 +102,9 @@
         <!--<a-camera position="0 3 -4"> -->
         <a-entity id="cameraRig" position="0 2 -10" rotation="0 180 0">
             <a-camera look-controls wasd-controls position="0 1.6 0">
-                <a-gui-cursor id="cursor" raycaster="objects: [gui-interactable], .card" fuse="true" fuse-timeout="1500"
-                    color="#ECEFF1" hover-color="#CFD8DC" active-color="#607D8B" design="ring" visible="true">
+                <a-gui-cursor id="cursor" raycaster="objects: [gui-interactable], .card, .collidadle" fuse="true"
+                    fuse-timeout="1500" color="#ECEFF1" hover-color="#CFD8DC" active-color="#607D8B" design="ring"
+                    visible="true">
                 </a-gui-cursor>
                 <a-entity cursor="rayOrigin: mouse" raycaster="objects: .card; far: 10;" visible="false">
                 </a-entity>
@@ -138,11 +139,8 @@
         </a-plane>
 
         <!-- Poker Table -->
-        <a-entity class="ar-exclude" id="poker-table" gltf-model="#poker-table" position="0 0 -2" scale="2.8 2.8 2.8">
+        <a-entity class="ar-exclude" id="poker-table" gltf-model="#poker-table" position="0 0 -2" scale="2 2 2">
         </a-entity>
-
-        <a-entity id="virtualKeyboard" keyboard="target: #nameInput" position="0 1 -2" visible="false"></a-entity>
-
 
         <!-- Menu -->
         <!-- Menu -->
@@ -154,9 +152,8 @@
                 <!-- Titel -->
                 <a-gui-label width="3" height="0.5" value="Memory Game" font-size="0.3" font-color="#FFFFFF"
                     background-color="#333333" margin="0 0 0.2 0"></a-gui-label>
-                <a-gui-input width="2.5" height="0.7" placeholder="Enter Your Name" font-size="0.2" value=""
-                    margin="0 0 0.2 0" tabindex="1" id="nameInput" keyboard>
-                </a-gui-input>
+                <a-gui-label width="3" height="0.5" value="Spieler 1" font-size="0.3" font-color="#FFFFFF"
+                    background-color="#333333" margin="0 0 0.2 0"></a-gui-label>
 
                 <!-- Start Game Button -->
                 <a-gui-button width="2.5" height="0.7" value="Start Game" font-size="0.4" font-color="#FFFFFF"
@@ -225,6 +222,11 @@
                 <a-gui-label value="Leaderboard" width="2.5" height="0.5" font-size="0.3" background-color="#444"
                     margin="0 0 0.2 0">
                 </a-gui-label>
+
+                <a-gui-button width="2" height="0.7" value="Back" font-size="0.3" font-color="#FFFFFF"
+                    background-color="#666" hover-color="#444" active-color="#222" onclick="hideLeaderboard()"
+                    margin="0 0 0.2 0">
+                </a-gui-button>
                 <!-- Dynamisch generierte Leaderboard-Einträge -->
                 <!-- Diese werden über JavaScript hinzugefügt -->
                 <a-gui-label id="leaderboardEntry1" value="1. ---" width="2.5" height="0.4" font-size="0.2"
@@ -236,11 +238,12 @@
                 <a-gui-label id="leaderboardEntry4" value="4. ---" width="2.5" height="0.4" font-size="0.2"
                     font-color="#FFFFFF" background-color="#333" margin="0 0 0.1 0"></a-gui-label>
 
-                <a-gui-button width="2" height="0.7" value="Back" font-size="0.3" font-color="#FFFFFF"
-                    background-color="#666" hover-color="#444" active-color="#222" onclick="hideLeaderboard()"
-                    margin="0 0 0.2 0">
                 </a-gui-button>
             </a-gui-flex-container>
+        </a-entity>
+
+        <a-entity id="keyboard" a-keyboard>
+
         </a-entity>
 
         <!-- Memory Cards -->
@@ -348,6 +351,7 @@
         function backToMenu() {
             // Timer stoppen
             clearInterval(timerInterval);
+
 
             // Show main menu
             const mainMenu = document.querySelector('[menu-handler]');
