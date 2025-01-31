@@ -1,6 +1,5 @@
 AFRAME.registerComponent('game-manager', {
     init: function () {
-        // Available card textures
         this.cardTypes = [
             '#club2', '#club3', '#club4', '#club5', '#club6',
             '#club7', '#club8', '#club9', '#club10',
@@ -26,14 +25,12 @@ AFRAME.registerComponent('game-manager', {
         const scene = document.querySelector('a-scene');
         const isAR = scene.is('ar-mode');
 
-        // Clear existing cards
         while (this.el.firstChild) {
             this.el.removeChild(this.el.firstChild);
         }
 
-        // Karten direkt für AR oder VR/Desktop platzieren
-        const startPosition = isAR ? { x: -0.4, z: -0.4 } : { x: -0.1, z: 0 }; // Adjust VR start position here
-        const spacing = isAR ? 0.15 : 0.4; // Kleinere Abstände in AR
+        const startPosition = isAR ? { x: -0.4, z: -0.4 } : { x: -0.1, z: 0 };
+        const spacing = isAR ? 0.15 : 0.4;
         const size = isAR ? { width: 0.06, height: 0.09 } : { width: 0.15, height: 0.25 }; this.createCardsGrid(startPosition, spacing, size);
     },
 
@@ -41,7 +38,7 @@ AFRAME.registerComponent('game-manager', {
         const selectedCards = this.selectRandomCards(8);
         let cards = [];
         selectedCards.forEach(card => {
-            cards.push(card, card); // Create pairs
+            cards.push(card, card);
         });
         cards = this.shuffleArray(cards);
 
@@ -73,7 +70,7 @@ AFRAME.registerComponent('game-manager', {
         card.setAttribute('position', `${x} 0.01 ${z}`);
         card.setAttribute('rotation', '-90 0 0');
         card.setAttribute('depth', '0.001');
-        card.setAttribute('height', size.height); // Einheitliche Größe
+        card.setAttribute('height', size.height);
         card.setAttribute('width', size.width);
         card.setAttribute('material', 'src: #card-back; side: double');
         card.setAttribute('data-card', cardType);
@@ -142,13 +139,10 @@ AFRAME.registerComponent('card-handler', {
     }
 });
 
-// game-handler.js
-
 window.gameTime = 0;
 window.pairsFound = 0;
 window.timerInterval = null;
 
-// Startet ein neues Spiel
 window.startGame = function () {
     console.log("startGame");
     const cameraRig = document.querySelector('#cameraRig');
@@ -170,7 +164,6 @@ window.startGame = function () {
     gameManager.startNewGame();
 };
 
-// Timer aktualisieren
 window.updateTimer = function () {
     gameTime++;
     const minutes = Math.floor(gameTime / 60);
@@ -181,16 +174,14 @@ window.updateTimer = function () {
     timerLabel.setAttribute('value', formattedTime);
 }
 
-// Gefundene Paare aktualisieren
 window.updatePairsFound = function () {
     const pairsLabel = document.querySelector('#pairsLabel');
     pairsLabel.setAttribute('value', `Pairs Found: ${pairsFound}`);
     checkVictory();
 };
 
-// Überprüft, ob der Spieler gewonnen hat
 window.checkVictory = function () {
-    if (pairsFound === 8) { // Anzahl der Paare anpassen
+    if (pairsFound === 8) {
         clearInterval(timerInterval);
 
         const victoryMessage = document.querySelector('#victoryMessage');
@@ -207,10 +198,8 @@ window.checkVictory = function () {
         const ingameMenu = document.querySelector('#ingameMenu');
         ingameMenu.setAttribute('visible', false);
 
-        // Ergebnis speichern und Leaderboard aktualisieren
         window.saveLeaderboardEntry(window.playerName, finalTime);
 
-        // Nach 7 Sekunden ins Hauptmenü zurückkehren
         setTimeout(() => {
             victoryMessage.setAttribute('visible', false);
             window.backToMenu();
@@ -219,20 +208,16 @@ window.checkVictory = function () {
 };
 
 window.resetGame = function () {
-    // Timer zurücksetzen
     gameTime = 0;
     pairsFound = 0;
     updatePairsFound();
 
-    // Timer neu starten
     clearInterval(timerInterval);
     timerInterval = setInterval(updateTimer, 1000);
 
-    // Update timer display immediately
     const timerLabel = document.querySelector('#timerLabel');
     timerLabel.setAttribute('value', 'Time: 00:00');
 
-    // Spielmanager für Neustart des Spiels
     const gameManager = document.querySelector('[game-manager]').components['game-manager'];
     gameManager.startNewGame();
 }

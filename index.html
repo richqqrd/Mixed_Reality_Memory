@@ -16,12 +16,10 @@
 </head>
 
 <body>
-    <div id="overlay"></div>
     <a-scene webxr="requiredFeatures: hit-test; 
     optionalFeatures: dom-overlay, local-floor, hand-tracking;
     overlayElement: #overlay;" vr-mode-ui="enabled: true" ar-mode-ui="enabled: true"
-        device-orientation-permission-ui="enabled: true" renderer="colorManagement: true"
-        keyboard-shortcuts="enterVR: false">
+        device-orientation-permission-ui="enabled: true" renderer="colorManagement: true">
         <a-assets>
 
             <a-asset-item id="left-hand-lowpoly" src="res/leftHandLow.glb"></a-asset-item>
@@ -91,10 +89,10 @@
             <img id="spadeK" src="res/model/Spades_K.png">
             <img id="spadeA" src="res/model/Spades_A.png">
 
-            <!-- Add the rosewood parquet texture -->
+            <!-- osewood parquet texture -->
             <img id="floor-texture" src="res/Rosewood_Parquet.jpg">
 
-            <!-- Wände -->
+            <!-- walls -->
             <img id="wall-texture" src="res/wall.jpg">
         </a-assets>
 
@@ -252,9 +250,6 @@
             decay="1.5">
         </a-light>
         <a-sky color="#111111"></a-sky> </a-scene>
-
-
-
 </body>
 
 </html>
