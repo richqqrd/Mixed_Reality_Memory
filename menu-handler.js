@@ -1,42 +1,50 @@
-AFRAME.registerComponent('menu-handler', {
-    init: function () {
-        // Init code here if needed
-    },
+// menu-handler.js
 
-    startGame: function () {
-        console.log('Starting game');
-        const gameManager = document.querySelector('[game-manager]').components['game-manager'];
-        // TODO: Add start game logic
-    },
+window.backToMenu = function () {
+    clearInterval(timerInterval);
 
-    resetGame: function () {
-        console.log('Resetting game');
-        const gameManager = document.querySelector('[game-manager]').components['game-manager'];
-        // TODO: Add reset game logic
-    },
+    const mainMenu = document.querySelector('[menu-handler]');
+    mainMenu.setAttribute('visible', true);
+    mainMenu.setAttribute('pointer-events', 'auto');
 
-    exitGame: function () {
-        console.log("Exiting game...");
-        const scene = document.querySelector('a-scene');
+    const ingameMenu = document.querySelector('#ingameMenu');
+    ingameMenu.setAttribute('visible', false);
 
-        // Abschiedsbildschirm anzeigen
-        const exitText = document.createElement('a-text');
-        exitText.setAttribute('value', 'Thank you for playing!');
-        exitText.setAttribute('position', '0 2 -3');
-        exitText.setAttribute('color', '#FF0000');
-        exitText.setAttribute('align', 'center');
-        scene.appendChild(exitText);
+    const cameraRig = document.querySelector('#cameraRig');
+    cameraRig.setAttribute('position', '0 1 -6');
+    cameraRig.setAttribute('rotation', '0 180 0');
 
-        // Überprüfen, ob eine WebXR-Session aktiv ist
-        const xrSession = scene.renderer.xr.getSession();
-        if (xrSession) {
-            // Prüfen, ob es sich um AR oder VR handelt
-            if (xrSession.environmentBlendMode === "opaque") {
-                console.log("VR session ending...");
-            } else if (xrSession.environmentBlendMode === "alpha-blend") {
-                console.log("AR session ending...");
-            }
-            xrSession.end(); // WebXR-Sitzung beenden
-        }
+    const gameManager = document.querySelector('[game-manager]');
+    while (gameManager.firstChild) {
+        gameManager.removeChild(gameManager.firstChild);
     }
-});
+}
+
+window.exitGame = function () {
+    clearInterval(timerInterval);
+
+    const sceneEl = document.querySelector('a-scene');
+    if (sceneEl.is('vr-mode') || sceneEl.is('ar-mode')) {
+        sceneEl.exitVR();
+        window.close();
+    }
+}
+
+window.showLeaderboard = function () {
+    const mainMenu = document.querySelector('[menu-handler]');
+    mainMenu.setAttribute('visible', false);
+    mainMenu.setAttribute('pointer-events', 'none');
+
+    const leaderboardMenu = document.querySelector('#leaderboardMenu');
+    leaderboardMenu.setAttribute('visible', true);
+    leaderboardMenu.setAttribute('pointer-events', 'auto');
+};
+
+window.hideLeaderboard = function () {
+    console.log("test");
+    const leaderboardMenu = document.querySelector('#leaderboardMenu');
+    leaderboardMenu.setAttribute('visible', false);
+    leaderboardMenu.setAttribute('pointer-events', 'none');
+
+    backToMenu();
+};

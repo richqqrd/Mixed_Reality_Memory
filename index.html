@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-<!-- TODO curso lade zeit-->
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,9 +8,11 @@
     <script src="https://rawgit.com/rdub80/aframe-gui/master/dist/aframe-gui.min.js"></script>
     <script src="dist/aframe-keyboard.min.js"></script>
 
-
-    <script src="game-handler.js"></script>
     <script src="menu-handler.js"></script>
+    <script src="leaderboard-handler.js"></script>
+    <script src="game-handler.js"></script>
+    <script src="main.js"></script>
+
 </head>
 
 <body>
@@ -99,7 +99,6 @@
         </a-assets>
 
         <!-- Camera -->
-        <!--<a-camera position="0 3 -4"> -->
         <a-entity id="cameraRig" position="0 1 -6" rotation="0 180 0">
             <a-camera look-controls wasd-controls position="0 0 0">
                 <a-gui-cursor id="cursor" raycaster="objects: [gui-interactable], .card, .collidadle" fuse="true"
@@ -111,9 +110,7 @@
             </a-camera>
         </a-entity>
 
-
-
-
+        <!--Room-->
         <a-plane class="room-element ar-exclude" position="0 5.625 7.5" rotation="0 180 0" width="15" height="11.25"
             material="src: #wall-texture; repeat: 6 4.5; side: double">
         </a-plane>
@@ -144,9 +141,7 @@
         </a-entity>
 
         <!-- Menu -->
-        <!-- Menu -->
         <a-entity position="0 2.5 -4" rotation="0 180 0" menu-handler>
-            <!-- Menü -->
             <a-gui-flex-container flex-direction="column" justify-content="center" align-items="center" opacity="0.5"
                 width="3.5" height="4.5" panel-color="#1E1E1E" panel-rounded="0.2" position="0 0 0">
 
@@ -161,6 +156,7 @@
                     background-color="#4CAF50" hover-color="#45A049" active-color="#388E3C" onclick="startGame()"
                     margin="0 0 0.2 0"></a-gui-button>
 
+                <!-- Leaderboard -->
                 <a-gui-button width="2.5" height="0.7" value="Leaderboard" font-size="0.4" font-color="#FFFFFF"
                     background-color="#888CB7" hover-color="#6B6B6B" active-color="#545454" onclick="showLeaderboard()"
                     margin="0 0 0.2 0">
@@ -170,10 +166,7 @@
                 <a-gui-button width="2.5" height="0.7" value="Exit" font-size="0.4" font-color="#FFFFFF"
                     background-color="#F44336" hover-color="#D32F2F" active-color="#B71C1C" onclick="exitGame()"
                     margin="0 0 0.2 0"></a-gui-button>
-
             </a-gui-flex-container>
-
-
         </a-entity>
 
         <!-- Ingame-Menü -->
@@ -181,9 +174,11 @@
             <a-gui-flex-container flex-direction="column" justify-content="center" align-items="flex-start" width="2.5"
                 height="2.5" panel-color="#333333" opacity="0.8" panel-rounded="0.2">
 
+                <!-- Time -->
                 <a-gui-label id="timerLabel" width="2.3" height="0.4" value="Time: 00:00" font-size="0.3"
                     font-color="#FFFFFF" background-color="#444444"></a-gui-label>
 
+                <!-- Pairs -->
                 <a-gui-label id="pairsLabel" width="2.3" height="0.4" value="Pairs Found: 0" font-size="0.3"
                     font-color="#FFFFFF" background-color="#444444"></a-gui-label>
 
@@ -201,6 +196,7 @@
             </a-gui-flex-container>
         </a-entity>
 
+        <!-- Victory Message -->
         <a-entity id="victoryMessage" position="0 4 0" rotation="0 180 0" visible="false">
             <a-gui-flex-container flex-direction="column" justify-content="center" align-items="center" width="3.5"
                 height="2.5" panel-color="#FFD700" opacity="0.9" panel-rounded="0.2">
@@ -223,13 +219,10 @@
                 <a-gui-label value="Leaderboard" width="2.5" height="0.5" font-size="0.3" background-color="#444"
                     margin="0 0 0.2 0">
                 </a-gui-label>
-
                 <a-gui-button width="2" height="0.7" value="Back" font-size="0.3" font-color="#FFFFFF"
                     background-color="#666" hover-color="#444" active-color="#222" onclick="hideLeaderboard()"
                     margin="0 0 0.2 0">
                 </a-gui-button>
-                <!-- Dynamisch generierte Leaderboard-Einträge -->
-                <!-- Diese werden über JavaScript hinzugefügt -->
                 <a-gui-label id="leaderboardEntry1" value="1. ---" width="2.5" height="0.4" font-size="0.2"
                     font-color="#FFFFFF" background-color="#333" margin="0 0 0.1 0"></a-gui-label>
                 <a-gui-label id="leaderboardEntry2" value="2. ---" width="2.5" height="0.4" font-size="0.2"
@@ -238,21 +231,13 @@
                     font-color="#FFFFFF" background-color="#333" margin="0 0 0.1 0"></a-gui-label>
                 <a-gui-label id="leaderboardEntry4" value="4. ---" width="2.5" height="0.4" font-size="0.2"
                     font-color="#FFFFFF" background-color="#333" margin="0 0 0.1 0"></a-gui-label>
-
                 </a-gui-button>
             </a-gui-flex-container>
-        </a-entity>
-
-        <a-entity id="keyboard" a-keyboard>
-
         </a-entity>
 
         <!-- Memory Cards -->
         <a-entity position="-0.5 1.7 -2.7" game-manager>
         </a-entity>
-
-
-
 
         <!-- Lighting -->
         <!-- Ambient light for general room illumination -->
@@ -268,284 +253,6 @@
         </a-light>
         <a-sky color="#111111"></a-sky> </a-scene>
 
-
-
-    <script>
-        function exitGame() {
-            // Timer stoppen
-            clearInterval(timerInterval);
-
-            // Ingame-Menü ausblenden
-            const ingameMenu = document.querySelector('#ingameMenu');
-            ingameMenu.setAttribute('visible', false);
-            window.close();
-        }
-        window.playerName = "Player"; // Standardname
-
-        window.gameTime = 0;
-        window.pairsFound = 0;
-        window.timerInterval = null;
-
-        window.startGame = function () {
-            console.log("startGame")
-            // Get the camera rig
-            const cameraRig = document.querySelector('#cameraRig');
-
-            // New position closer to the table
-            cameraRig.setAttribute('position', '0 1 -4');
-            cameraRig.setAttribute('rotation', '0 180 0');
-
-            const mainMenu = document.querySelector('[menu-handler]');
-            mainMenu.setAttribute('visible', false);
-
-            // Ingame-Menü sichtbar machen
-            const ingameMenu = document.querySelector('#ingameMenu');
-            ingameMenu.setAttribute('visible', true);
-
-            // Timer zurücksetzen und starten
-            gameTime = 0;
-            pairsFound = 0;
-            updatePairsFound();
-            timerInterval = setInterval(updateTimer, 1000);
-
-            // Get game manager and start the game
-            const gameManager = document.querySelector('[game-manager]').components['game-manager'];
-            gameManager.startNewGame();
-        }
-
-        // Timer aktualisieren
-        function updateTimer() {
-            gameTime++;
-            const minutes = Math.floor(gameTime / 60);
-            const seconds = gameTime % 60;
-            const formattedTime = `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-            const timerLabel = document.querySelector('#timerLabel');
-            timerLabel.setAttribute('value', formattedTime);
-        }
-
-        // Gefundene Paare aktualisieren
-        window.updatePairsFound = function () {
-            const pairsLabel = document.querySelector('#pairsLabel');
-            pairsLabel.setAttribute('value', `Pairs Found: ${pairsFound}`);
-        }
-
-        function resetGame() {
-            // Timer zurücksetzen
-            gameTime = 0;
-            pairsFound = 0;
-            updatePairsFound();
-
-            // Timer neu starten
-            clearInterval(timerInterval);
-            timerInterval = setInterval(updateTimer, 1000);
-
-            // Update timer display immediately
-            const timerLabel = document.querySelector('#timerLabel');
-            timerLabel.setAttribute('value', 'Time: 00:00');
-
-            // Spielmanager für Neustart des Spiels
-            const gameManager = document.querySelector('[game-manager]').components['game-manager'];
-            gameManager.startNewGame();
-        }
-
-        function backToMenu() {
-            // Timer stoppen
-            clearInterval(timerInterval);
-
-
-            // Show main menu
-            const mainMenu = document.querySelector('[menu-handler]');
-            mainMenu.setAttribute('visible', true);
-            mainMenu.setAttribute('pointer-events', 'auto'); // Aktiviert Interaktionen
-
-
-            // Ingame-Menü ausblenden
-            const ingameMenu = document.querySelector('#ingameMenu');
-            ingameMenu.setAttribute('visible', false);
-
-            // Kamera zurücksetzen
-            const cameraRig = document.querySelector('#cameraRig');
-            cameraRig.setAttribute('position', '0 1 -6');
-            cameraRig.setAttribute('rotation', '0 180 0');
-
-            // Clear cards instead of calling undefined endGame
-            const gameManager = document.querySelector('[game-manager]');
-            while (gameManager.firstChild) {
-                gameManager.removeChild(gameManager.firstChild);
-            }
-        }
-
-        const sceneEl = document.querySelector('a-scene');
-
-        sceneEl.addEventListener('loaded', () => {
-            // Event für den Wechsel in AR/VR-Modus
-            sceneEl.addEventListener('enter-vr', () => {
-                const isAR = sceneEl.renderer.xr.getSession().environmentBlendMode === 'additive' ||
-                    sceneEl.renderer.xr.getSession().environmentBlendMode === 'alpha-blend';
-
-                // Elemente mit der Klasse "ar-exclude" ein- oder ausblenden
-                document.querySelectorAll('.ar-exclude').forEach(el => {
-                    el.setAttribute('visible', !isAR); // Unsichtbar im AR-Modus
-                });
-
-                if (isAR) {
-                    // Deaktiviere Skybox
-                    const skyEl = document.querySelector('a-sky');
-                    if (skyEl) {
-                        skyEl.setAttribute('visible', false);
-                    }
-
-                    // Setze den Hintergrund des Renderers auf transparent
-                    sceneEl.renderer.setClearColor(new THREE.Color(0x000000), 0); // Transparenter Hintergrund
-                } else {
-                    // Reaktiviere Skybox und Hintergrundfarbe für VR
-                    const skyEl = document.querySelector('a-sky');
-                    if (skyEl) {
-                        skyEl.setAttribute('visible', true);
-                    }
-
-                    // Setze eine Hintergrundfarbe für VR
-                    sceneEl.renderer.setClearColor(new THREE.Color(0x111111), 1); // Dunkler Hintergrund
-                }
-            });
-        });
-
-        window.checkVictory = function () {
-            if (pairsFound === 8) { // Anzahl der Paare anpassen, falls nötig
-                clearInterval(timerInterval); // Timer stoppen
-
-                // Aktualisiere die Victory-Anzeige
-                const victoryMessage = document.querySelector('#victoryMessage');
-                const finalTimeLabel = document.querySelector('#finalTimeLabel');
-                const finalPairsLabel = document.querySelector('#finalPairsLabel');
-
-                const minutes = Math.floor(gameTime / 60);
-                const seconds = gameTime % 60;
-                const finalTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                finalTimeLabel.setAttribute('value', `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-                finalPairsLabel.setAttribute('value', `Pairs Found: ${pairsFound}`);
-
-                // Victory-Meldung einblenden
-                victoryMessage.setAttribute('visible', true);
-
-                ingameMenu.setAttribute('visible', false);
-
-                // Ergebnis speichern und Leaderboard aktualisieren
-                saveLeaderboardEntry(window.playerName, finalTime);
-
-
-                // Nach 3 Sekunden ins Hauptmenü zurückkehren
-                setTimeout(() => {
-                    victoryMessage.setAttribute('visible', false);
-                    backToMenu();
-                }, 7000);
-            }
-        };
-
-        // Rufe `checkVictory()` jedes Mal auf, wenn ein Paar gefunden wurde
-        window.updatePairsFound = function () {
-            const pairsLabel = document.querySelector('#pairsLabel');
-            pairsLabel.setAttribute('value', `Pairs Found: ${pairsFound}`);
-
-            checkVictory(); // Überprüfen, ob der Spieler gewonnen hat
-        };
-
-        window.showLeaderboard = function () {
-            // Hide main menu
-            const mainMenu = document.querySelector('[menu-handler]');
-            mainMenu.setAttribute('visible', false);
-            mainMenu.setAttribute('pointer-events', 'none'); // Deaktiviert Interaktionen
-
-
-            // Show leaderboard
-            const leaderboardMenu = document.querySelector('#leaderboardMenu');
-            leaderboardMenu.setAttribute('visible', true);
-            leaderboardMenu.setAttribute('pointer-events', 'auto'); // Aktiviert Interaktionen
-
-        };
-
-        window.hideLeaderboard = function () {
-
-            console.log("test")
-            // Hide leaderboard
-            const leaderboardMenu = document.querySelector('#leaderboardMenu');
-            leaderboardMenu.setAttribute('visible', false);
-            leaderboardMenu.setAttribute('pointer-events', 'none'); // Deaktiviert Interaktionen
-
-
-            backToMenu();
-        };
-
-        function saveLeaderboardEntry(name, time) {
-            // Leaderboard aus localStorage laden oder neues Array erstellen
-            console.log("saveLeaderboardEntry called with:", name, time);
-            if (typeof time !== 'string' || !/^\d{2}:\d{2}$/.test(time)) {
-                console.error("Invalid time format:", time);
-                return; // Beende die Funktion, wenn das Format ungültig ist
-            }
-            let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-            console.log("Aktuelles Leaderboard vor dem Hinzufügen:", leaderboard); // Log hinzufügen
-
-            // Neuen Eintrag hinzufügen
-            leaderboard.push({ name: name, time: time });
-            console.log("Neuer Eintrag hinzugefügt:", { name: name, time: time }); // Log hinzufügen
-
-            // Leaderboard nach Zeit sortieren (MM:SS → Sekunden)
-
-
-            // Optional: Begrenze das Leaderboard auf die Top 10
-            leaderboard = leaderboard.slice(0, 4);
-
-            // Leaderboard in localStorage speichern
-            localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
-            console.log("Leaderboard in localStorage gespeichert."); // Log hinzufügen
-
-            // Leaderboard im UI aktualisieren
-            updateLeaderboardUI();
-        }
-        function updateLeaderboardUI() {
-
-            // Leaderboard aus localStorage laden
-            let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-            console.log("Leaderboard geladen aus localStorage:", leaderboard);
-
-            // **Aktualisiere nur die Top 4 Einträge**
-            for (let i = 0; i < 4; i++) { // Ändere die Schleife von 10 auf 4
-                const entryLabel = document.querySelector(`#leaderboardEntry${i + 1}`);
-                if (leaderboard[i]) {
-                    entryLabel.setAttribute('value', `${i + 1}. ${leaderboard[i].name} (${leaderboard[i].time})`);
-                } else {
-                    entryLabel.setAttribute('value', `${i + 1}. ---`);
-                }
-            }
-
-            console.log("Leaderboard UI aktualisiert mit den Top 4 Einträgen.");
-        }
-        // Funktion zum Verarbeiten der Namenseingabe
-        function handleNameInput() {
-            console.log("name")
-            const name = event.target.getAttribute('value').trim();
-            if (name !== "") {
-                window.playerName = name;
-                console.log("Player name set to:", window.playerName);
-            }
-        }
-
-        document.querySelector('#nameInput').addEventListener('click', () => {
-            document.querySelector('#virtualKeyboard').setAttribute('visible', true);
-        });
-
-        // Schließen der Tastatur nach Eingabe
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                document.querySelector('#virtualKeyboard').setAttribute('visible', false);
-                handleNameInput();
-            }
-        });
-
-
-    </script>
 
 
 </body>

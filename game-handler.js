@@ -141,3 +141,98 @@ AFRAME.registerComponent('card-handler', {
         }
     }
 });
+
+// game-handler.js
+
+window.gameTime = 0;
+window.pairsFound = 0;
+window.timerInterval = null;
+
+// Startet ein neues Spiel
+window.startGame = function () {
+    console.log("startGame");
+    const cameraRig = document.querySelector('#cameraRig');
+    cameraRig.setAttribute('position', '0 1 -4');
+    cameraRig.setAttribute('rotation', '0 180 0');
+
+    const mainMenu = document.querySelector('[menu-handler]');
+    mainMenu.setAttribute('visible', false);
+
+    const ingameMenu = document.querySelector('#ingameMenu');
+    ingameMenu.setAttribute('visible', true);
+
+    gameTime = 0;
+    pairsFound = 0;
+    updatePairsFound();
+    timerInterval = setInterval(updateTimer, 1000);
+
+    const gameManager = document.querySelector('[game-manager]').components['game-manager'];
+    gameManager.startNewGame();
+};
+
+// Timer aktualisieren
+window.updateTimer = function () {
+    gameTime++;
+    const minutes = Math.floor(gameTime / 60);
+    const seconds = gameTime % 60;
+    const formattedTime = `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    const timerLabel = document.querySelector('#timerLabel');
+    timerLabel.setAttribute('value', formattedTime);
+}
+
+// Gefundene Paare aktualisieren
+window.updatePairsFound = function () {
+    const pairsLabel = document.querySelector('#pairsLabel');
+    pairsLabel.setAttribute('value', `Pairs Found: ${pairsFound}`);
+    checkVictory();
+};
+
+// Überprüft, ob der Spieler gewonnen hat
+window.checkVictory = function () {
+    if (pairsFound === 8) { // Anzahl der Paare anpassen
+        clearInterval(timerInterval);
+
+        const victoryMessage = document.querySelector('#victoryMessage');
+        const finalTimeLabel = document.querySelector('#finalTimeLabel');
+        const finalPairsLabel = document.querySelector('#finalPairsLabel');
+
+        const minutes = Math.floor(gameTime / 60);
+        const seconds = gameTime % 60;
+        const finalTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        finalTimeLabel.setAttribute('value', `Time: ${finalTime}`);
+        finalPairsLabel.setAttribute('value', `Pairs Found: ${pairsFound}`);
+
+        victoryMessage.setAttribute('visible', true);
+        const ingameMenu = document.querySelector('#ingameMenu');
+        ingameMenu.setAttribute('visible', false);
+
+        // Ergebnis speichern und Leaderboard aktualisieren
+        window.saveLeaderboardEntry(window.playerName, finalTime);
+
+        // Nach 7 Sekunden ins Hauptmenü zurückkehren
+        setTimeout(() => {
+            victoryMessage.setAttribute('visible', false);
+            window.backToMenu();
+        }, 7000);
+    }
+};
+
+window.resetGame = function () {
+    // Timer zurücksetzen
+    gameTime = 0;
+    pairsFound = 0;
+    updatePairsFound();
+
+    // Timer neu starten
+    clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
+
+    // Update timer display immediately
+    const timerLabel = document.querySelector('#timerLabel');
+    timerLabel.setAttribute('value', 'Time: 00:00');
+
+    // Spielmanager für Neustart des Spiels
+    const gameManager = document.querySelector('[game-manager]').components['game-manager'];
+    gameManager.startNewGame();
+}
