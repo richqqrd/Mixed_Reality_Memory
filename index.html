@@ -114,27 +114,28 @@
 
 
 
-        <a-plane class="room-element ar-exclude" position="0 7.5 10" rotation="0 180 0" width="20" height="15"
-            material="src: #wall-texture; repeat: 8 6; side: double">
+        <!-- Vorderwand -->
+        <a-plane class="room-element ar-exclude" position="0 7.5 -10" rotation="0 0 0" width="5" height="3.75"
+            material="src: #wall-texture; repeat: 2 1.5; side: double">
         </a-plane>
 
-        <a-plane class="room-element ar-exclude" position="0 7.5 -10" rotation="0 0 0" width="20" height="15"
-            material="src: #wall-texture; repeat: 8 6; side: double">
+        <!-- Linke Wand -->
+        <a-plane class="room-element ar-exclude" position="-2.5 7.5 0" rotation="0 90 0" width="5" height="3.75"
+            material="src: #wall-texture; repeat: 2 1.5; side: double">
         </a-plane>
 
-        <a-plane class="room-element ar-exclude" position="-10 7.5 0" rotation="0 90 0" width="20" height="15"
-            material="src: #wall-texture; repeat: 8 6; side: double">
+        <!-- Rechte Wand -->
+        <a-plane class="room-element ar-exclude" position="2.5 7.5 0" rotation="0 -90 0" width="5" height="3.75"
+            material="src: #wall-texture; repeat: 2 1.5; side: double">
         </a-plane>
 
-        <a-plane class="room-element ar-exclude" position="10 7.5 0" rotation="0 -90 0" width="20" height="15"
-            material="src: #wall-texture; repeat: 8 6; side: double">
+        <!-- Boden -->
+        <a-plane class="room-element ar-exclude" position="0 0 0" rotation="-90 0 0" width="5" height="5"
+            material="src: #floor-texture; repeat: 2 2">
         </a-plane>
 
-        <a-plane class="room-element ar-exclude" position="0 0 0" rotation="-90 0 0" width="20" height="20"
-            material="src: #floor-texture; repeat: 8 8">
-        </a-plane>
-
-        <a-plane class="room-element ar-exclude" position="0 15 0" rotation="90 0 0" width="20" height="20"
+        <!-- Decke -->
+        <a-plane class="room-element ar-exclude" position="0 3.75 0" rotation="90 0 0" width="5" height="5"
             color="#8B4513">
         </a-plane>
 
