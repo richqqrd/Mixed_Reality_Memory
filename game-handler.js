@@ -32,9 +32,9 @@ AFRAME.registerComponent('game-manager', {
         }
 
         // Karten direkt für AR oder VR/Desktop platzieren
-        const startPosition = isAR ? { x: -0.5, z: -0.5 } : { x: -0.1, z: 0 }; // Adjust VR start position here
-        const spacing = isAR ? 0.2 : 0.4; // Kleinere Abstände in AR
-        const size = isAR ? { width: 0.08, height: 0.12 } : { width: 0.15, height: 0.25 }; this.createCardsGrid(startPosition, spacing, size);
+        const startPosition = isAR ? { x: -0.4, z: -0.4 } : { x: -0.1, z: 0 }; // Adjust VR start position here
+        const spacing = isAR ? 0.15 : 0.4; // Kleinere Abstände in AR
+        const size = isAR ? { width: 0.06, height: 0.09 } : { width: 0.15, height: 0.25 }; this.createCardsGrid(startPosition, spacing, size);
     },
 
     createCardsGrid: function (startPosition, spacing, size) {
