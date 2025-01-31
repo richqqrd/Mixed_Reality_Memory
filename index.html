@@ -8,6 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://rawgit.com/rdub80/aframe-gui/master/dist/aframe-gui.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/bryik/aframe-keyboard-component@master/dist/aframe-keyboard-component.min.js"></script>
+
 
     <script src="game-handler.js"></script>
     <script src="menu-handler.js"></script>
@@ -138,6 +141,9 @@
         <a-entity class="ar-exclude" id="poker-table" gltf-model="#poker-table" position="0 0 -2" scale="2.8 2.8 2.8">
         </a-entity>
 
+        <a-entity id="virtualKeyboard" keyboard="target: #nameInput" position="0 1 -2" visible="false"></a-entity>
+
+
         <!-- Menu -->
         <!-- Menu -->
         <a-entity position="0 2.5 -6" rotation="0 180 0" menu-handler>
@@ -148,9 +154,8 @@
                 <!-- Titel -->
                 <a-gui-label width="3" height="0.5" value="Memory Game" font-size="0.3" font-color="#FFFFFF"
                     background-color="#333333" margin="0 0 0.2 0"></a-gui-label>
-
-                <a-gui-input width="2.5" height="0.7" placeholder="Enter Your Name" font-size="0.2"
-                    value="Enter PlayerName" margin="0 0 0.2 0" onclick="handleNameInput()" tabindex="1">
+                <a-gui-input width="2.5" height="0.7" placeholder="Enter Your Name" font-size="0.2" value=""
+                    margin="0 0 0.2 0" tabindex="1" id="nameInput" keyboard>
                 </a-gui-input>
 
                 <!-- Start Game Button -->
@@ -521,6 +526,18 @@
                 console.log("Player name set to:", window.playerName);
             }
         }
+
+        document.querySelector('#nameInput').addEventListener('click', () => {
+            document.querySelector('#virtualKeyboard').setAttribute('visible', true);
+        });
+
+        // Schließen der Tastatur nach Eingabe
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                document.querySelector('#virtualKeyboard').setAttribute('visible', false);
+                handleNameInput();
+            }
+        });
 
 
     </script>
