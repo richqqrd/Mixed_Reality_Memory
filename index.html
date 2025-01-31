@@ -100,7 +100,7 @@
 
         <!-- Camera -->
         <!--<a-camera position="0 3 -4"> -->
-        <a-entity id="cameraRig" position="0 1 -10" rotation="0 180 0">
+        <a-entity id="cameraRig" position="0 1 -6" rotation="0 180 0">
             <a-camera look-controls wasd-controls position="0 0 0">
                 <a-gui-cursor id="cursor" raycaster="objects: [gui-interactable], .card, .collidadle" fuse="true"
                     fuse-timeout="1500" color="#ECEFF1" hover-color="#CFD8DC" active-color="#607D8B" design="ring"
@@ -114,30 +114,30 @@
 
 
 
-        <!-- Vorderwand -->
-        <a-plane class="room-element ar-exclude" position="0 7.5 -10" rotation="0 0 0" width="5" height="3.75"
-            material="src: #wall-texture; repeat: 2 1.5; side: double">
+        <a-plane class="room-element ar-exclude" position="0 5.625 7.5" rotation="0 180 0" width="15" height="11.25"
+            material="src: #wall-texture; repeat: 6 4.5; side: double">
         </a-plane>
 
-        <!-- Linke Wand -->
-        <a-plane class="room-element ar-exclude" position="-2.5 7.5 0" rotation="0 90 0" width="5" height="3.75"
-            material="src: #wall-texture; repeat: 2 1.5; side: double">
+        <a-plane class="room-element ar-exclude" position="0 5.625 -7.5" rotation="0 0 0" width="15" height="11.25"
+            material="src: #wall-texture; repeat: 6 4.5; side: double">
         </a-plane>
 
-        <!-- Rechte Wand -->
-        <a-plane class="room-element ar-exclude" position="2.5 7.5 0" rotation="0 -90 0" width="5" height="3.75"
-            material="src: #wall-texture; repeat: 2 1.5; side: double">
+        <a-plane class="room-element ar-exclude" position="-7.5 5.625 0" rotation="0 90 0" width="15" height="11.25"
+            material="src: #wall-texture; repeat: 6 4.5; side: double">
         </a-plane>
 
-        <!-- Boden -->
-        <a-plane class="room-element ar-exclude" position="0 0 0" rotation="-90 0 0" width="5" height="5"
-            material="src: #floor-texture; repeat: 2 2">
+        <a-plane class="room-element ar-exclude" position="7.5 5.625 0" rotation="0 -90 0" width="15" height="11.25"
+            material="src: #wall-texture; repeat: 6 4.5; side: double">
         </a-plane>
 
-        <!-- Decke -->
-        <a-plane class="room-element ar-exclude" position="0 3.75 0" rotation="90 0 0" width="5" height="5"
-            color="#8B4513">
+        <a-plane class="room-element ar-exclude" position="0 0 0" rotation="-90 0 0" width="15" height="15"
+            material="src: #floor-texture; repeat: 6 6">
         </a-plane>
+
+        <a-plane class="room-element ar-exclude" position="0 11.25 0" rotation="90 0 0" width="15" height="15"
+            material="src: #floor-texture">
+        </a-plane>
+
 
         <!-- Poker Table -->
         <a-entity class="ar-exclude" id="poker-table" gltf-model="#poker-table" position="0 0 -2" scale="2 2 2">
@@ -145,7 +145,7 @@
 
         <!-- Menu -->
         <!-- Menu -->
-        <a-entity position="0 2.5 -6" rotation="0 180 0" menu-handler>
+        <a-entity position="0 2.5 -4" rotation="0 180 0" menu-handler>
             <!-- Menü -->
             <a-gui-flex-container flex-direction="column" justify-content="center" align-items="center" opacity="0.5"
                 width="3.5" height="4.5" panel-color="#1E1E1E" panel-rounded="0.2" position="0 0 0">
@@ -259,11 +259,11 @@
         <a-light type="ambient" intensity="0.4" color="#4C4C4C"></a-light>
 
         <!-- Point lights for walls -->
-        <a-light type="point" position="-5 7.5 0" intensity="0.1" color="#FFF" decay="2"></a-light>
-        <a-light type="point" position="5 7.5 0" intensity="0.1" color="#FFF" decay="2"></a-light>
+        <a-light type="point" position="-5 7.5 0" intensity="0.01" color="#FFF" decay="2"></a-light>
+        <a-light type="point" position="5 7.5 0" intensity="0.01" color="#FFF" decay="2"></a-light>
 
         <!-- Softer spotlight for table -->
-        <a-light type="spot" position="0 10 -2" rotation="-90 0 0" intensity="0.8" angle="60" penumbra="0.6"
+        <a-light type="spot" position="0 10 -2" rotation="-90 0 0" intensity="0.4" angle="60" penumbra="0.6"
             decay="1.5">
         </a-light>
         <a-sky color="#111111"></a-sky> </a-scene>
